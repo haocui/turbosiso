@@ -1,0 +1,193 @@
+/** \mainpage Soft Input Soft Output modules for turbo reception
+ * \author Bogdan Cristea
+ * \version 1.0
+ *
+ * \section descr Description
+ * C++ class implementing Soft Input Soft Output (SISO) modules for turbo reception using <a href="http://localhost/itpp/index.html"> IT++ library</a>. 
+ *
+ * Within the \link tr::SISO SISO class\endlink, the following SISO modules are implemented:
+ *- \ref SISO_RSC "decoder for Recursive Systematic Convolutional (RSC) codes"
+ *- \ref SISO_NSC "decoder for Non-recursive non-Systematic Convolutional (NSC) codes"
+ *- \ref SISO_equalizer "equalizer for multipath channels (without and with precoding)"
+ *- \ref SISO_descrambler "descrambler for Interleave Division Multiple Access (IDMA) systems"
+ *- \ref SISO_MUD "Multi User Detectors (MUDs) for IDMA systems (without and with precoding)"
+ *- \ref SISO_demapper "demappers for Bit Interleaved Coded Modulation (BICM) systems and Space Time (ST) BICM systems"
+ *
+ * The EXtrinsic Information Transfer (EXIT) chart \ref brink01convergence "[11]" of turbo receivers based on SISO modules can be obtained
+ * using the \link tr::EXIT EXIT class\endlink.
+ *
+ * \section generic Generic SISO module
+ * A generic SISO module has as inputs intrinsic and a priori informations and as outputs extrinsic informations \ref benedetto96soft "[1]".
+ *
+ * \image html SISO.jpg "Generic SISO module"
+ *
+ * The <em>intrinsic information of coded bits</em> is defined as:
+ * \f[
+ * L(v(n);I) = \ln \frac{p(y(n)/v(n)=1)}{p(y(n)/v(n)=0)}
+ * \f]
+ * where \f$p(y(n)/v(n)=1)\f$ is the probability density of the received symbol (e.g. BPSK modulated), \f$y(n)\f$, knowing the coded bit, \f$v(n)=1\f$.
+ *
+ * The <em>a priori information of data bits</em> is defined as:
+ * \f[
+ * L(u(k);I) = \ln \frac{P(u(k)=1)}{P(u(k)=0)}
+ * \f]
+ * where \f$P(u(k)=1)\f$ is the a priori probability of the data bit, \f$u(k)=1\f$. The relationship between the data bits, \f$u(k)\f$,
+ * and the coded bits, \f$v(n)\f$, defines the coding algorithm (e.g. convolutional coding, multipath propagation, symbol mapping, space-time coding, etc.).
+ *
+ * The <em>extrinsic information of coded bits</em> is defined as:
+ * \f[
+ * L(v(n);O) = \Lambda(v(n))-L(v(n);I)
+ * \f]
+ * where \f$\Lambda(v(n))\f$ is the Logarithm of Likelihood Ratio (LLR) of coded bits.
+ *
+ * The <em>extrinsic information of data bits</em> is defined as:
+ * \f[
+ * L(u(k);O) = \Lambda(u(k))-L(u(k);I)
+ * \f]
+ * where \f$\Lambda(u(k))\f$ is the LLR of data bits. 
+ 
+ * Both LLRs, \f$\Lambda(v(n))\f$ and \f$\Lambda(u(k))\f$, are computed using the Maximum A Posteriori (MAP) algorithm or some simplified version of it.
+ *
+ * At the last iteration of the turbo reception algorithm, data bits can be recovered from the LLR of data
+ * bits:
+ * \f[
+ * \tilde{u}(k) = 1\textrm{ if }\Lambda(u(k))\geq 0
+ * \f]
+ *
+ * \section detail Detailed description of SISO modules 
+ * 
+ * \anchor SISO_RSC <b>- decoder for RSC codes</b>
+ *
+ * \image html SISO_RSC.jpg "SISO RSC module"
+ *
+ * Decodes RSC codes of coding rate \f$1/2\f$. An adaptation of the MAP algorithm for RSC codes is used \ref pietrobon94simplification "[2]". Both versions, log MAP and max log MAP are implemented.
+ * The trellis describing the RSC code must begin in zero state. The trellis can end in zero state (tail bits must be added to input data bits of the RSC code) 
+ * or in an unknown state (no tail bits needed).
+ *
+ * When the BPSK modulated received symbols, \f$y(n)\f$, are fed to the SISO RSC module input, the intrinsic information of data and parity bits has
+ * the expression: \f[L(v(n);I) = -\frac{2}{\sigma^2}y(n)\f], where \f$\sigma^2\f$ is the variance of the Additive White Gaussian Noise (AWGN).
+ * The sign minus in the above expression comes from the way the BPSK mapping is done: \f$0\rightarrow +1\f$ and \f$1\rightarrow -1\f$.
+ * 
+ * For an usage example see \ref pccc "Parallel Concatenated Convolutional Codes".
+ *
+ * \anchor SISO_NSC <b>- decoder for NSC codes</b>
+ *
+ * \image html SISO_NSC.jpg "SISO NSC module"
+ *
+ * Decodes NSC codes of coding rate \f$1/r\f$, where \f$r\f$ is the number of outputs of the NSC code. Optionally, a scrambler
+ * can be used at the NSC code output in order to lower the coding rate. In this case, the SISO NSC module is used for decoding both
+ * the NSC code and the scrambler. The MAP algorithm (log MAP and max log MAP) is used \ref  bahl74optimal "[3]". The trellis must have the same properties as for the RSC codes.
+ *
+ * For an usage example see \ref sccc "Serial Concatenated Convolutional Codes" or \ref idma "Interleave Division Multiple Access".
+ *
+ * \anchor SISO_equalizer <b>- equalizer for multipath channels</b>
+ *
+ * \image html SISO_EQ.jpg "SISO equalizer module"
+ *
+ * The multipath channel is a Finite Impulse Response (FIR) filter with real coefficients. The multipath channel is seen as a code of coding rate \f$1\f$. The channel order must be at least \f$L=1\f$ 
+ * (\f$2\f$ multipaths). The channel inputs are BPSK modulated symbols (\f$0\rightarrow +1\f$ and \f$1\rightarrow -1\f$).  
+ *
+ * In this case the general model of the SISO module is not followed and the received signal is directly used as one input of the SISO module (instead
+ * of the intrinsic information). The second input is represented by the a priori information of input symbols. There is a single output represented
+ * by the extrinsic information of input symbols.
+ *
+ * A precoder can be used at the channel input in order to obtain a recursive equivalent channel. When a precoder is used, the channel order can be 
+ * at least \f$L=0\f$ (one path). 
+ *
+ * The MAP algorithm (log MAP and max log MAP) is implemented according to \ref koetter04turbo "[4]". The channel trellis must begin 
+ * in zero state (that is the channel cases must be filled with \f$+1\f$). The channel trellis can end in zero state or in an unknown state.
+ *
+ * For an usage example see \ref equalizer "Turbo equalizer".
+ *
+ * \anchor SISO_descrambler <b>- descrambler for IDMA systems</b>
+ *
+ * \image html SISO_descr.jpg "SISO descrambler module"
+ *
+ * The scrambler is seen as a repetition code. A simplified version of the MAP algorithm is implemented \ref mahadevappa02mitigating "[5]".
+ *
+ * For an usage example see \ref idma "Interleave Division Multiple Access".
+ *
+ * \anchor SISO_MUD <b>- MUD for IDMA systems</b>
+ *
+ * \image html SISO_MUD.jpg "SISO MUD module"
+ *
+ * The SISO MUD has as inputs the received signal and the a priori informations of emitted symbols from all users. The output of the 
+ * SISO MUD is represented by the extrinsic informations of all users. Thus, in our numerical implementation, the a priori and extrinsic informations are matrices with rows corresponding to different users.
+ *
+ * The multipath channels from all users are seen as a code with multiple inputs and single output (MISO).
+ * The channel inputs are BPSK modulated symbols (\f$0\rightarrow +1\f$ and \f$1\rightarrow -1\f$) and the channel coefficients are real numbers.
+ *
+ * The following algorithms are implemented \ref mahadevappa02mitigating "[5]", \ref liu04iterative "[6]":
+ * - max log MAP algorithm
+ * - Gaussian Chip Detector (GCD)
+ * - simplified GCD
+ *
+ * When the max log MAP algorithm is used, the channel trellis must begin in zero state (that is the channel cases of each users must be filled with \f$+1\f$) 
+ * and can end in zero state or in an unknown state. When the GCD and the simplified GCD are used, a zero padding technique must be used in order to
+ * eliminate the interblock interference (a block is defined by the interleaver length) \ref wang00wireless "[7]". 
+ * 
+ * The max log MAP algorithm can be used when a precoder is used at each channel input, in order to obtain recursive equivalent channels.
+ *
+ * For an usage example see \ref idma "Interleave Division Multiple Access".
+ *
+ * \anchor SISO_demapper <b>- demapper for BICM and ST-BICM</b>
+ *
+ * \image html SISO_demapper.jpg "SISO demapper module"
+ *
+ * The SISO demapper has as inputs the received signal and the a priori information of data bits. Its output is represented by the
+ * extrinsic information of data bits.
+ * 
+ * The channel must be flat-fading, represented by a single complex attenuation at each time instant. The channel inputs are complex 
+ * symbols from a Quadrature Amplitude Modulated (QAM) constellation. The constellation must be quadratic.
+ *
+ * The SISO demapper for BICM implements the following algorithms \ref tonello00space "[8]":
+ * - log MAP algorithm
+ * - max log MAP algorithm
+ *
+ * and in the SISO demapper for ST-BICM the following algorithms are implemented \ref cristea08turbo "[9]":
+ * - max log MAP algorithm adapted for ST block codes
+ * - max log MAP algorithm adapted for Alamouti code (much lower complexity than the max log MAP algorithm for ST block codes)
+ * - Gaussian Approximation (GA)
+ * - simplified GA
+ * - Minimum Mean Squared Error (MMSE) Parallel Interferrence Canceller (PIC)
+ * - Zero Forcing (ZF) PIC
+ *
+ * The ST block codes are implemented using the model proposed in \ref hassibi02high "[10]" (see \link tr::STC STC class\endlink). Further, all algorithms
+ * implemented in the SISO demapper for ST-BICM use an equivalent channel model with real coefficients including the
+ * ST block code and the Multiple Input Multiple Output (MIMO) channel \ref hassibi02high "[10]".
+ *
+ * For an usage example see \ref bicm "Bit Interleaved Coded Modulation" or \ref stbicm "Space Time Bit Interleaved Coded Modulation".
+ *
+ * \section ref References
+ * \anchor benedetto96soft [1] S. Benedetto, D. Divsalar, G. Motorsi, and F. Pollara, ''A Soft-Input Soft-Output Maximum A Posteriori (MAP) Module 
+ * to Decode Parallel and Serial Concatenated Codes,`` TDA Progress Report 42-127, November 1996.
+ *
+ * \anchor pietrobon94simplification [2] Steven S. Pietrobon and Adrian S. Barbulescu, ''A simplification of the modified Bahl decoding algorithm for systematic convolutional codes``, 
+ * Proc. ISITA, 1994
+ *
+ * \anchor bahl74optimal [3] L. R. Bahl, J. Cocke, F. Jelinek, and J. Raviv, ''Optimal decoding of linear codes for minimizing symbol error rate,`` 
+ * IEEE Transactions on Information Theory, pp. 284-287, Mar. 1974
+ *
+ * \anchor koetter04turbo [4] R. Koetter, A. C. Singer, and M. Tuchler, ''Turbo equalization: an iterative equalization and decoding technique for coded data transmision,`` 
+ * IEEE Signal Processing Magazine, pp. 67-80, Jan. 2004
+ *
+ * \anchor mahadevappa02mitigating [5] R. H. Mahadevappa and J. G. Proakis, ''Mitigating multiple access interference and intersymbol interference in uncoded CDMA systems
+ * with chip-level interleaving,`` IEEE Transactions on Wireless Communications, pp. 781-792, Oct. 2002
+ *
+ * \anchor liu04iterative [6] L. Liu and L. Ping, ''Iterative detection of chip interleaved CDMA systems in multipath channels,`` Electronics letters,
+ * vol. 40, pp. 884-886, July 2004.
+ *
+ * \anchor wang00wireless [7] Z. Wang and G. B. Giannakis, ''Wireless multicarrier communications: where Fourier meets Shannon,`` IEEE Signal Processing Magazine, pp. 29-48, 
+ * May 2000
+ *
+ * \anchor tonello00space [8] A. Tonello, ''Space-time bit-interleaved coded modulation with an iterative decoding strategy,`` in Vehicular Technology
+Conference, vol. 1, pp. 473-478 vol.1, 2000
+ *
+ * \anchor cristea08turbo [9] B. Cristea, ''Turbo receivers for Space-Time BICM``, to be published in IEEE Transactions on Wireless Communications
+ *
+ * \anchor hassibi02high [10] B. Hassibi and B. M. Hochwald, ''High-rate codes that are linear in space and time,`` IEEE Transactions
+ * on Information Theory, vol. 48, pp. 1804-1824, July 2002
+ *
+ * \anchor brink01convergence [11] S. ten Brink, ''Convergence behavior of iteratively decoded parallel concatenated codes,`` IEEE 
+ * Transactions on Communications, vol. 49, pp. 1727-1737, Oct. 2001
+ */
