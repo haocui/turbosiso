@@ -191,4 +191,4 @@ For an usage example see [http://turbosiso.googlecode.com/svn/wiki/bicm.html Bit
 [11] S. ten Brink, ''Convergence behavior of iteratively decoded parallel concatenated codes,`` IEEE Transactions on Communications, vol. 49, pp. 1727-1737, Oct. 2001
 
 ----
-Generated on Tue Aug 4 21:12:48 2009 for SISO by  [http://www.doxygen.org/index.html  [http://turbosiso.googlecode.com/svn/wiki/doxygen.png]] 1.5.6
+Generated on Wed Aug 5 00:07:48 2009 for SISO by  [http://www.doxygen.org/index.html  [http://turbosiso.googlecode.com/svn/wiki/doxygen.png]] 1.5.6
