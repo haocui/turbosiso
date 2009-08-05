@@ -1,0 +1,234 @@
+/** \page pccc Parallel Concatenated Convolutional Codes of coding rate 1/3
+ *
+ * The Parallel Concatenated Convolutional Codes (PCCCs) are Recursive and Systematic Convolutional (RSC) codes
+ * with the same generator polynomials \f$(037\ 021)\f$ and separated by an interleaver. The first RSC code has the trellis terminated (tail bits are added) 
+ * and the second has unterminated trellis (no tail bits). The separating interleaver is random and has length \f$2^{14}\f$.
+ * The output is formed by using the systematic bits and the parity bits from both RSC codes. The symbols are BPSK modulated before
+ * being send into an Additive White Gaussian Noise (AWGN) channel.
+ *
+ * \image html PCCC.jpg "PCCC  of coding rate 1/3"
+ *
+ * The turbo decoder for PCCCs uses two SISO RSC modules. The input of the first SISO RSC module is represented by the intrinsic 
+ * information of data and parity bits. The input of the second RSC module is represented only by the intrinsic information of parity bits
+ * since the intrinsic information of data bits has been used in the first SISO RSC module. The extrinsic information of data bits
+ * is exchanged between the two SISO RSC modules.
+ *
+ * \image html PCCC_tdec.jpg "Turbo decoder for PCCC"
+ *
+ * The performance of PCCCs is shown below when using the max log MAP and the log MAP algorithms. It can 
+ * be seen that the use of the max log MAP algorithm has worser performance at low Signal to Noise Ratio (SNR)
+ * than the log MAP algorithm. This is due to the fact that the approximation \f$\log(\exp(a)+\exp(b))\approx \max(a,b)\f$, 
+ * used in the max log MAP algorithm, does not hold at low SNR.
+ * 
+ * \image html pccc_maxlogMAP.jpg "Performance of the turbo decoder for PCCC using max log MAP algorithm"
+ * \image html pccc_logMAP.jpg "Performance of the turbo decoder for PCCC using log MAP algorithm"
+ *
+ * Simulation times of programs written in C++ and Matlab are shown in the table below. 
+ * Both programs use the SISO class. Note that the time difference between simulation times (C++ and Matlab) 
+ * is almost constant for both MAP algorithms since the most complex routine is written in C++.
+ *
+ * <CENTER>
+ *  <TABLE>
+ *  <CAPTION> Simulation times for PCCC in C++ and Matlab </CAPTION>
+ *   <TR> <TD>  </TD> <TD> <B><CENTER>C++</CENTER></B> </TD> <TD> <B><CENTER>Matlab</CENTER></B> </TD> </TR>
+ *   <TR> <TD> <B>max log MAP</B> </TD> <TD> 1 hr, 0 min, 22 sec </TD> <TD> 1 hr, 35 min, 40 sec </TD> </TR>
+ *   <TR> <TD> <B>log MAP</B> </TD> <TD> 3 hr, 3 min, 57 sec </TD> <TD> 3 hr, 32 min, 55 sec </TD> </TR> 
+ *  </TABLE>
+ * </CENTER>
+ *
+ * The EXIT diagram of the turbo decoder is shown below at a SNR \f$\frac{E_b}{N_0}=0.8\ dB\f$. Both SISO RSC modules use the log MAP algorihm.
+ * Note that in ten Brink's approach the extrinsic information of data bits is computed differently by substracting from the LLR both
+ * a priori and intrinsic information, not only the a priori information as in our approach.
+ *
+ * \image html EXIT_pccc_logMAP.jpg "EXIT diagram of the turbo decoder"
+ *
+ * Programs used to obtain the figures: pccc.cpp, pccc.m and EXIT_pccc.cpp.
+ *
+ * References: 
+ * 
+ * S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module 
+ * to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
+ *
+ * S. ten Brink, ''Convergence behavior of iteratively decoded parallel concatenated codes,`` IEEE Transactions on Communications, 
+ * vol. 49, pp. 1727-1737, Oct. 2001
+ *
+ * \page sccc Serial Concatenated Convolutional Codes of coding rate 1/4
+ *
+ * The Serial Concatenated Convolutional Codes (SCCCs) are realized with a Non-recursive non-Systematic Convolutional (NSC) code
+ * followed, after interleaving, by a Recursive and Systematic Convolutional (RSC) code. This configuration ensures the best performance
+ * for SCCCs. Both convolutional codes have the same generator polynomials \f$(037\ 021)\f$. The interleaver length is \f$2^{14}\f$. 
+ * The symbols are BPSK modulated before being send into an Additive White Gaussian Noise (AWGN) channel.
+ *
+ * \image html SCCC.jpg "SCCC  of coding rate 1/4"
+ *
+ * The turbo decoder for SCCCs uses a SISO RSC module and a SISO NSC module. The input of the SISO RSC module is represented by the
+ * intrinsic information of coded bits (the output of the RSC code). Its output, the extrinsic information of data bits of the RSC code, is
+ * used as intrinsic information for the SISO NSC module. This is the only information used by the SISO NSC module to compute the extrinsic information
+ * of coded bits (used in the next iteration as a priori information for the SISO RSC module) and the extrinsic information of data bits
+ * (used at the last iteration to recover the data bits).
+ *
+ * \image html SCCC_tdec.jpg "Turbo decoder for SCCC"
+ *
+ * The performance for SCCCs is shown below using max log MAP and log MAP algorithms. Worser performance of the max log MAP
+ * algorithm are due to the fact that the approximation \f$\log(\exp(a)+\exp(b))\approx \max(a,b)\f$, 
+ * used in the max log MAP algorithm, does not hold at low Signal to Noise Ratio (SNR).
+ *
+ * \image html sccc_maxlogMAP.jpg "Performance of the turbo decoder for SCCC using max log MAP algorithm"
+ * \image html sccc_logMAP.jpg "Performance of the turbo decoder for SCCC using log MAP algorithm"
+ *
+ * Program used to obtain the figures: sccc.cpp.
+ *
+ * Reference: S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module
+ * to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
+ *
+ * \page equalizer Turbo equalizer
+ *
+ * The coded transmission is realized using a Non-recursive and non-Systematic Convolutional (NSC) code whose bits, 
+ * after interleaving (of length \f$2^{14}\f$), are BPSK modulated and send into a multipath channel. The multipath channel has real coefficients and
+ * must have at least \f$2\f$ multipaths in order to use an iterative algorithm at the receiver side. The multipath channel can be seen
+ * as a coder of coding rate \f$1\f$, thus the coded transmission being a type of Serial Concatenated Code (SCC). In our case,
+ * the multipath channel has Rayleigh distributed coefficients and has \f$4\f$ multipaths. 
+ * Optionally a precoder can be used at channel input in order to obtain an equivalent recursive channel. The precoder polynomial is \f$03\f$. 
+ * At the channel output, the received signal is affected by an Additive White Gaussian Noise (AWGN).
+ *
+ * \image html coded_tx.jpg "Coded transmission"
+ *
+ * The turbo equalizer uses a SISO equalizer module and a SISO NSC module. The SISO equalizer module uses at its input the received
+ * signal and the a priori information of coded bits. It delivers at its output the extrinsic information of channel input symbols (coded bits of the NSC code). After deinterleaving,
+ * the extrinsic information is used as intrinsic information for the SISO NSC module. The SISO NSC module computes the extrinsic information
+ * of coded bits (used in the next iteration as a priori information at the SISO equalizer module input) and the extrinsic information of data 
+ * bits (used at the last iteration to recover the data bits).
+ *
+ * \image html turbo_eq.jpg "Turbo equalizer"
+ *
+ * The performance of the turbo equalizer without precoder is shown below. As for the SCCCs, the max log MAP algorithm has worser performance than the log MAP algorithm at low SNR.
+ *
+ * \image html equalizer_maxlogMAP.jpg "Performances of the turbo equalizer without precoder using max log MAP algorithm"
+ * \image html equalizer_logMAP.jpg "Performances of the turbo equalizer without precoder using log MAP algorithm"
+ *
+ * The performance of the turbo equalizer with precoder is shown below. It can be seen that, if the SNR is high enough,
+ * the performance is better than in the case when no precoder is used.
+ *
+ * \image html prec_equalizer_maxlogMAP.jpg "Performance of the turbo equalizer with precoder using max log MAP algorithm"
+ * \image html prec_equalizer_logMAP.jpg "Performance of the turbo equalizer with precoder using log MAP algorithm"
+ *
+ * Program used to obtain the figures: equalizer.cpp.
+ *
+ * Reference: R. Koetter, A. C. Singer, and M. Tuchler, ''Turbo equalization: an iterative equalization and decoding technique for coded data transmision,`` 
+ * IEEE Signal Processing Magazine, pp. 67-80, Jan. 2004
+ *
+ * \page idma Interleave Division Multiple Access with turbo multiuser detection
+ *
+ * The Interleave Division Multiple Access (IDMA) system shown below uses encoders (ENC) at emitter side, followed by interleavers (\f$\pi_m(n)\f$), different for each user.
+ * The encoder can be a scrambler of length \f$N_s=16\f$ or a NSC code (generator polynomials \f$(037\ 021)\f$) followed by a scrambler (\f$N_s=8\f$).
+ * After interleaving, a Zero Padding technique is used in order to eliminate the interference between adjacent blocks of chips (permuted coded bits).
+ * The block length is defined by the interleaver length (\f$2^{14}\f$). The chips are BPSK modulated and send into multipath channels (\f$4\f$ multipaths). 
+ * The channels are different for each user and have real, Rayleigh distributed, attenuations.
+ * The sum of all emitted signals is received and the received signal is affected by an Additive White Gaussian Noise (AWGN).
+ *
+ * \image html IDMA_model.jpg "IDMA system model"
+ *
+ * The turbo multi-user receiver uses a SISO MUD module and SISO descrambler modules, corresponding to each user. When the
+ * NSC code is followed by a scrambler, a SISO NSC module is used. This turbo multi-user receiver is a generalisation of turbo equalization
+ * principles. When there is a single user in the system, we have a turbo equalizer.
+ * 
+ * \image html IDMA_receiver.jpg "Turbo multi-user receiver for IDMA systems" 
+ * 
+ * Below the performance of the IDMA systems is shown in two different configurations: using only a scrambler at each
+ * user side and using a NSC code followed by a scrambler. In both cases the performance is limited by the performance
+ * of a mono-user transmission in an AWGN channel.
+ *
+ * \image html IDMA_sGCD_8.jpg "Performance of the IDMA system with scrambler and using the simplified GCD for 8 users"
+ * \image html ccIDMA_sGCD_5.jpg "Performance of the IDMA system with NSC code followed by a scrambler and using the simplified GCD for 5 users"
+ *
+ * It is also shown the EXIT diagram of the turbo multi-user receiver based on the simplified GCD and the scrambler at a SNR \f$\frac{E_b}{N_0}=8\ dB\f$. Thus it can be seen the iterative 
+ * exchange of informations between the two SISO modules.
+ *
+ * \image html EXIT_sGCD_descr.jpg "EXIT diagram of the turbo multi-user receiver"
+ *
+ * Programs used to obtain the figures: IDMA.cpp, TC_mud.cpp and TC_descrambler.cpp
+ *
+ * Reference: L. Liu and L. Ping, ''Iterative detection of chip interleaved CDMA systems in multipath channels,`` Electronics letters,
+ * vol. 40, pp. 884-886, July 2004.
+ *
+ * \page bicm Bit Interleaved Coded Modulation
+ *
+ * The Bit Interleaved Coded Modulation (BICM) system uses a Non-recursive non-Systematic Convolutional (NSC) code whose bits
+ * are interleaved (interleaver length is \f$2^{14}\f$) and then mapped to complex symbols (\f$16\f$ QAM modulation is used). 
+ * Channel capacity is increased by using higher order modulations. Gray and binary mapping
+ * (following Matlab's terminology) are used. The channel is assumed flat fading, defined only by an attenuation. 
+ * The attenuations are generated from a complex Gaussian distribution with variance \f$1/2\f$ on each dimension.
+ * The received signal is affected by an Additive White Gaussian Noise (AWGN). Note that the BICM system is a type of Serial Concatenated
+ * Code (SCC).
+ *
+ * \image html bicm.jpg "BICM system model"
+ *
+ * The turbo receiver uses a SISO demapper module and a SISO NSC module. The SISO demapper module is a soft demodulator using at its input
+ * the received complex signal and the a priori information of coded bits. Its output is the extrinsic information of coded bits. 
+ * The extrinsic information becomes, after deinterleaving, intrinsic information
+ * at the SISO NSC module input. The SISO NSC module outputs an extrinsic information of coded bits (used as a priori information in the next
+ * iteration at the SISO demapper input) and an extrinsic information of data bits (used to recover the data bits at the last iteration).
+ *
+ * \image html bicm_rec.jpg "Turbo receiver for BICM systems"
+ *
+ * Performance of BICM are shown below when using Gray or binary mapping with log MAP and max log MAP algorithms in both SISO modules.
+ * Note that Gray mapping has worse performance than binary mapping when a turbo receiver is used.
+ *
+ * \image html BICM_Gray_logMAP.jpg "Performances of the BICM using Gray mapping and logMAP algorithm"
+ * \image html BICM_Gray_maxlogMAP.jpg "Performances of the BICM using Gray mapping and maxlogMAP algorithm"
+ * \image html BICM_binary_logMAP.jpg "Performances of the BICM using binary mapping and logMAP algorithm"
+ * \image html BICM_binary_maxlogMAP.jpg "Performances of the BICM using binary mapping and maxlogMAP algorithm"
+ *
+ * Simulation times for programs written in C++ and Matlab are shown below. We have used a Matlab program in order to modulate with binary
+ * mapping, since in IT++ only Gray mapping is provided. The simulation times in both cases (with log MAP and max log MAP algorithms) are
+ * very close due to the fact that the Matlab program uses several ''mex`` functions (besides the functions implementing the SISO modules).
+ *
+ * <CENTER>
+ *  <TABLE>
+ *  <CAPTION> Simulation times for BICM in C++ and Matlab </CAPTION>
+ *   <TR> <TD>  </TD> <TD> <B><CENTER>C++</CENTER></B> </TD> <TD> <B><CENTER>Matlab</CENTER></B> </TD> </TR>
+ *   <TR> <TD> <B>max log MAP</B> </TD> <TD> 43 min, 51 sec </TD> <TD> 52 min, 20 sec </TD> </TR>
+ *   <TR> <TD> <B>log MAP</B> </TD> <TD> 1 hr, 10 min, 53 sec </TD> <TD> 1 hr, 16 min, 33 sec </TD> </TR> 
+ *  </TABLE>
+ * </CENTER>
+ *
+ * Programs used to obtain the figures: BICM.cpp and BICM.m.
+ *
+ * Reference: A. Tonello, ''Space-time bit-interleaved coded modulation with an iterative decoding strategy,`` 
+ * in Vehicular Technology Conference, vol. 1, pp. 473-478 vol.1, 2000
+ *
+ * \page stbicm Space Time Bit Interleaved Coded Modulation
+ *
+ * The Space Time Bit Interleaved Coded Modulation (ST-BICM) system is a generalisation of the BICM system (here the generator
+ * polynomials are \f$(0133\ 0171)\f$), using, after the modulator,
+ * an ST block code. Thus, transmit diversity can be achieved. Further, capacity increase of communication system is achieved
+ * by transmitting different symbols through different emission antennas. We have considered two ST codes: Golden code 
+ * (among the best known ST block codes) and Alamouti code (orthogonal ST block code). The number of emission antennas is \f$2\f$ (equal to 
+ * the number of reception antennas). The order of the QAM modulation is chosen so that the spectral efficiency is constant \f$\eta=2 
+ * \mbox{ bits/symbol duration}\f$: for Golden code QAM modulation is used and for Alamouti code \f$16\f$ QAM modulation is used. 
+ * The Multiple-Input Multiple-Output (MIMO) channel is considered flat fading with complex attenuations.
+ *
+ * \image html stbicm.jpg "ST-BICM system model"
+ *
+ * The turbo receiver uses a SISO demapper module and a SISO NSC module. The SISO demapper module decodes both the ST block code and the 
+ * MIMO channel. It uses at its input the received complex signal and the a priori information of coded bits. Its output is represented by
+ * the extrinsic information of coded bits which, after deinterleaving, becomes intrinsic information for the SISO NSC. The SISO NSC module outputs an extrinsic information of coded bits (used as a priori information in the next
+ * iteration at the SISO demapper input) and an extrinsic information of data bits (used to recover the data bits at the last iteration).
+ *
+ * \image html bicm_rec.jpg "Turbo receiver for ST-BICM systems"
+ *
+ * Performance of the ST-BICM using different algorithms in the SISO demapper and different ST block codes are presented below. Note that
+ * the peformances of GA and MMSE PIC algorithms are very close, but the algorithm complexity is a function of system parameters.
+ *
+ * \image html Golden_maxlogMAP_Hassibi.jpg "Performance of the ST-BICM using Golden code and max log MAP algorithm"
+ * \image html Golden_GA.jpg "Performance of the ST-BICM using Golden code and GA algorithm"
+ * \image html Golden_sGA.jpg "Performance of the ST-BICM using Golden code and simplified GA algorithm"
+ * \image html Golden_mmsePIC.jpg "Performance of the ST-BICM using Golden code and MMSE PIC algorithm"
+ * \image html Golden_zfPIC.jpg "Performance of the ST-BICM using Golden code and ZF PIC algorithm"
+ * \image html Alamouti_maxlogMAP.jpg "Performance of the ST-BICM using Alamouti code and max log MAP algorithm"
+ *
+ * Program used to obtain the figures: STBICM.cpp.
+ *
+ * Reference: B. Cristea, ''Turbo receivers for Space-Time BICM``, to be published in IEEE Transactions on Wireless Communications
+ */
+ 
