@@ -15,7 +15,7 @@ Within the *SISO class*, the following SISO modules are implemented:
   * Multi User Detectors (MUDs) for IDMA systems (without and with precoding)
   * demappers for Bit Interleaved Coded Modulation (BICM) systems and Space Time (ST) BICM systems
 
-The EXtrinsic Information Transfer (EXIT) chart [11] of turbo receivers based on SISO modules can be obtained using the *EXIT class*.
+The EXtrinsic Information Transfer (EXIT) chart `[11]` of turbo receivers based on SISO modules can be obtained using the *EXIT class*.
 
 == Generic SISO module ==
 
