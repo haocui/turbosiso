@@ -6,12 +6,12 @@
 
 Within the *SISO class*, the following SISO modules are implemented:
 
-  * [SISOindex#SISO_RSC decoder for Recursive Systematic Convolutional (RSC) codes]
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_NSC decoder for Non-recursive non-Systematic Convolutional (NSC) codes]
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_equalizer equalizer for multipath channels (without and with precoding)]
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_descrambler descrambler for Interleave Division Multiple Access (IDMA) systems]
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_MUD Multi User Detectors (MUDs) for IDMA systems (without and with precoding)]
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_demapper demappers for Bit Interleaved Coded Modulation (BICM) systems and Space Time (ST) BICM systems]
+  * decoder for Recursive Systematic Convolutional (RSC) codes
+  * decoder for Non-recursive non-Systematic Convolutional (NSC) codes
+  * equalizer for multipath channels (without and with precoding)
+  * descrambler for Interleave Division Multiple Access (IDMA) systems
+  * Multi User Detectors (MUDs) for IDMA systems (without and with precoding)
+  * demappers for Bit Interleaved Coded Modulation (BICM) systems and Space Time (ST) BICM systems
 
 The EXtrinsic Information Transfer (EXIT) chart [http://turbosiso.googlecode.com/svn/wiki/index.html#brink01convergence [11]] of turbo receivers based on SISO modules can be obtained using the *EXIT class*.
 
