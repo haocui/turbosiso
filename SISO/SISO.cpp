@@ -1818,7 +1818,7 @@ void SISO::GCD(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, const itpp::
         for (n=0;n<N;n++)
         {
             col.replace_mid(n, impulse_response.get_row(k));
-            inv_cov_zeta = inv_Covr+((inv_Covr*col)*((col.T()*Vx(k,0))*inv_Covr))/(1-(col*Vx(k,0))*(inv_Covr*col));
+            inv_cov_zeta = inv_Covr+itpp::outer_product(inv_Covr*col, inv_Covr.T()*(col*Vx(k,0)))/(1-(col*Vx(k,0))*(inv_Covr*col));
             rec_chip = Er-col*(+1-Ex(k,n));
             nom = -0.5*rec_chip*(inv_cov_zeta*rec_chip);
             rec_chip = Er-col*(-1-Ex(k,n));
