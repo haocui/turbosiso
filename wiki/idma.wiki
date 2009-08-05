@@ -1,9 +1,4 @@
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html Main Page]
-  * [http://turbosiso.googlecode.com/svn/wiki/pages.html Related Pages]
-  * [http://turbosiso.googlecode.com/svn/wiki/namespaces.html Namespaces]
-  * [http://turbosiso.googlecode.com/svn/wiki/annotated.html Classes]
-  * [http://turbosiso.googlecode.com/svn/wiki/files.html Files]
-  * || Search for ||  ||
+#summary Interleave Division Multiple Access
 
 = Interleave Division Multiple Access with turbo multiuser detection =
 
@@ -35,9 +30,8 @@ Below the performance of the IDMA systems is shown in two different configuratio
 
 *EXIT diagram of the turbo multi-user receiver*
 
- Programs used to obtain the figures: [http://turbosiso.googlecode.com/svn/wiki/IDMA_8cpp.html IDMA.cpp], [http://turbosiso.googlecode.com/svn/wiki/TC__mud_8cpp.html TC_mud.cpp] and [http://turbosiso.googlecode.com/svn/wiki/TC__descrambler_8cpp.html TC_descrambler.cpp]
+ Programs used to obtain the figures: [http://turbosiso.googlecode.com/svn/trunk/IDMA.cpp IDMA.cpp], [http://turbosiso.googlecode.com/svn/trunk/TC_mud.cpp TC_mud.cpp] and [http://turbosiso.googlecode.com/svn/trunk/TC_descrambler.cpp TC_descrambler.cpp]
 
-Reference: L. Liu and L. Ping, ''Iterative detection of chip interleaved CDMA systems in multipath channels,`` Electronics letters, vol. 40, pp. 884-886, July 2004.
+*Reference:*
 
-----
-Generated on Wed Aug 5 00:07:50 2009 for SISO by  [http://www.doxygen.org/index.html  [http://turbosiso.googlecode.com/svn/wiki/doxygen.png]] 1.5.6
+L. Liu and L. Ping, ''Iterative detection of chip interleaved CDMA systems in multipath channels,`` Electronics letters, vol. 40, pp. 884-886, July 2004.
