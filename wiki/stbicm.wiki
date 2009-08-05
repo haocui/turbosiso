@@ -1,9 +1,4 @@
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html Main Page]
-  * [http://turbosiso.googlecode.com/svn/wiki/pages.html Related Pages]
-  * [http://turbosiso.googlecode.com/svn/wiki/namespaces.html Namespaces]
-  * [http://turbosiso.googlecode.com/svn/wiki/annotated.html Classes]
-  * [http://turbosiso.googlecode.com/svn/wiki/files.html Files]
-  * || Search for ||  ||
+#summary Space Time Bit Interleaved Coded Modulation
 
 = Space Time Bit Interleaved Coded Modulation =
 
@@ -45,9 +40,8 @@ The Space Time Bit Interleaved Coded Modulation (ST-BICM) system is a generalisa
 
 *Performance of the ST-BICM using Alamouti code and max log MAP algorithm*
 
- Program used to obtain the figures: [http://turbosiso.googlecode.com/svn/wiki/STBICM_8cpp.html STBICM.cpp].
+ Program used to obtain the figures: [http://turbosiso.googlecode.com/svn/trunk/STBICM.cpp STBICM.cpp].
 
-Reference: B. Cristea, ''Turbo receivers for Space-Time BICM``, to be published in IEEE Transactions on Wireless Communications
+*Reference:*
 
-----
-Generated on Wed Aug 5 00:07:50 2009 for SISO by  [http://www.doxygen.org/index.html  [http://turbosiso.googlecode.com/svn/wiki/doxygen.png]] 1.5.6
+B. Cristea, ''Turbo receivers for Space-Time BICM``, to be published in IEEE Transactions on Wireless Communications
