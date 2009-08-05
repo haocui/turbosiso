@@ -8,13 +8,13 @@ The Bit Interleaved Coded Modulation (BICM) system uses a Non-recursive non-Syst
 
 *BICM system model*
 
- The turbo receiver uses a SISO demapper module and a SISO NSC module. The SISO demapper module is a soft demodulator using at its input the received complex signal and the a priori information of coded bits. Its output is the extrinsic information of coded bits. The extrinsic information becomes, after deinterleaving, intrinsic information at the SISO NSC module input. The SISO NSC module outputs an extrinsic information of coded bits (used as a priori information in the next iteration at the SISO demapper input) and an extrinsic information of data bits (used to recover the data bits at the last iteration).
+The turbo receiver uses a SISO demapper module and a SISO NSC module. The SISO demapper module is a soft demodulator using at its input the received complex signal and the a priori information of coded bits. Its output is the extrinsic information of coded bits. The extrinsic information becomes, after deinterleaving, intrinsic information at the SISO NSC module input. The SISO NSC module outputs an extrinsic information of coded bits (used as a priori information in the next iteration at the SISO demapper input) and an extrinsic information of data bits (used to recover the data bits at the last iteration).
 
 [http://turbosiso.googlecode.com/svn/wiki/bicm_rec.jpg]
 
 *Turbo receiver for BICM systems*
 
- Performance of BICM are shown below when using Gray or binary mapping with log MAP and max log MAP algorithms in both SISO modules. Note that Gray mapping has worse performance than binary mapping when a turbo receiver is used.
+Performance of BICM are shown below when using Gray or binary mapping with log MAP and max log MAP algorithms in both SISO modules. Note that Gray mapping has worse performance than binary mapping when a turbo receiver is used.
 
 [http://turbosiso.googlecode.com/svn/wiki/BICM_Gray_logMAP.jpg]
 
@@ -32,7 +32,7 @@ The Bit Interleaved Coded Modulation (BICM) system uses a Non-recursive non-Syst
 
 *Performances of the BICM using binary mapping and maxlogMAP algorithm*
 
- Simulation times for programs written in C++ and Matlab are shown below. We have used a Matlab program in order to modulate with binary mapping, since in IT++ only Gray mapping is provided. The simulation times in both cases (with log MAP and max log MAP algorithms) are very close due to the fact that the Matlab program uses several ''mex`` functions (besides the functions implementing the SISO modules).
+Simulation times for programs written in C++ and Matlab are shown below. We have used a Matlab program in order to modulate with binary mapping, since in IT++ only Gray mapping is provided. The simulation times in both cases (with log MAP and max log MAP algorithms) are very close due to the fact that the Matlab program uses several ''mex`` functions (besides the functions implementing the SISO modules).
 
 Simulation times for BICM in C++ and Matlab
 
