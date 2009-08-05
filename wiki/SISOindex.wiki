@@ -1,3 +1,5 @@
+#summary Detailed description of SISO modules
+
 = Soft Input Soft Output modules for turbo reception =
 
 == Description ==
