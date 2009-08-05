@@ -1,6 +1,6 @@
 /** \mainpage Soft Input Soft Output modules for turbo reception
  * \author Bogdan Cristea
- * \version 1.0
+ * \version 1.1
  *
  * \section descr Description
  * C++ class implementing Soft Input Soft Output (SISO) modules for turbo reception using <a href="http://localhost/itpp/index.html"> IT++ library</a>. 
