@@ -1,9 +1,4 @@
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html Main Page]
-  * [http://turbosiso.googlecode.com/svn/wiki/pages.html Related Pages]
-  * [http://turbosiso.googlecode.com/svn/wiki/namespaces.html Namespaces]
-  * [http://turbosiso.googlecode.com/svn/wiki/annotated.html Classes]
-  * [http://turbosiso.googlecode.com/svn/wiki/files.html Files]
-  * || Search for ||  ||
+#summary Parallel Concatenated Convolutional Codes
 
 = Parallel Concatenated Convolutional Codes of coding rate 1/3 =
 
@@ -43,13 +38,10 @@ The EXIT diagram of the turbo decoder is shown below at a SNR [http://turbosiso.
 
 *EXIT diagram of the turbo decoder*
 
- Programs used to obtain the figures: [http://turbosiso.googlecode.com/svn/wiki/pccc_8cpp.html pccc.cpp], [http://turbosiso.googlecode.com/svn/wiki/pccc_8m.html pccc.m] and [http://turbosiso.googlecode.com/svn/wiki/EXIT__pccc_8cpp.html EXIT_pccc.cpp].
+ Programs used to obtain the figures: [http://turbosiso.googlecode.com/svn/trunk/pccc.cpp pccc.cpp], [http://turbosiso.googlecode.com/svn/trunk/pccc.m pccc.m] and [http://turbosiso.googlecode.com/svn/trunk/EXIT_pccc.cpp EXIT_pccc.cpp].
 
 References:
 
 S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
 
 S. ten Brink, ''Convergence behavior of iteratively decoded parallel concatenated codes,`` IEEE Transactions on Communications, vol. 49, pp. 1727-1737, Oct. 2001
-
-----
-Generated on Wed Aug 5 00:07:49 2009 for SISO by  [http://www.doxygen.org/index.html  [http://turbosiso.googlecode.com/svn/wiki/doxygen.png]] 1.5.6
