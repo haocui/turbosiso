@@ -1,19 +1,10 @@
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html Main Page]
-  * [http://turbosiso.googlecode.com/svn/wiki/pages.html Related Pages]
-  * [http://turbosiso.googlecode.com/svn/wiki/namespaces.html Namespaces]
-  * [http://turbosiso.googlecode.com/svn/wiki/annotated.html Classes]
-  * [http://turbosiso.googlecode.com/svn/wiki/files.html Files]
-  * || Search for ||  ||
-
 = Soft Input Soft Output modules for turbo reception =
-
-*Author:*Bogdan Cristea *Version:*1.0
 
 == Description ==
 
- C++ class implementing Soft Input Soft Output (SISO) modules for turbo reception using [http://localhost/itpp/index.html IT++ library].
+ C++ class implementing Soft Input Soft Output (SISO) modules for turbo reception using [http://sourceforge.net/apps/wordpress/itpp/ IT++ library].
 
-Within the [http://turbosiso.googlecode.com/svn/wiki/classtr_1_1SISO.html SISO class], the following SISO modules are implemented:
+Within the *SISO class*, the following SISO modules are implemented:
 
   * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_RSC decoder for Recursive Systematic Convolutional (RSC) codes]
   * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_NSC decoder for Non-recursive non-Systematic Convolutional (NSC) codes]
@@ -22,7 +13,7 @@ Within the [http://turbosiso.googlecode.com/svn/wiki/classtr_1_1SISO.html SISO c
   * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_MUD Multi User Detectors (MUDs) for IDMA systems (without and with precoding)]
   * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_demapper demappers for Bit Interleaved Coded Modulation (BICM) systems and Space Time (ST) BICM systems]
 
-The EXtrinsic Information Transfer (EXIT) chart [http://turbosiso.googlecode.com/svn/wiki/index.html#brink01convergence [11]] of turbo receivers based on SISO modules can be obtained using the [http://turbosiso.googlecode.com/svn/wiki/classtr_1_1EXIT.html EXIT class].
+The EXtrinsic Information Transfer (EXIT) chart [http://turbosiso.googlecode.com/svn/wiki/index.html#brink01convergence [11]] of turbo receivers based on SISO modules can be obtained using the *EXIT class*.
 
 == Generic SISO module ==
 
