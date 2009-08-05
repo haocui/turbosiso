@@ -40,7 +40,7 @@ The EXIT diagram of the turbo decoder is shown below at a SNR [http://turbosiso.
 
  Programs used to obtain the figures: [http://turbosiso.googlecode.com/svn/trunk/pccc.cpp pccc.cpp], [http://turbosiso.googlecode.com/svn/trunk/pccc.m pccc.m] and [http://turbosiso.googlecode.com/svn/trunk/EXIT_pccc.cpp EXIT_pccc.cpp].
 
-References:
+*References:*
 
 S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
 
