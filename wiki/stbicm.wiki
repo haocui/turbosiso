@@ -8,13 +8,13 @@ The Space Time Bit Interleaved Coded Modulation (ST-BICM) system is a generalisa
 
 *ST-BICM system model*
 
- The turbo receiver uses a SISO demapper module and a SISO NSC module. The SISO demapper module decodes both the ST block code and the MIMO channel. It uses at its input the received complex signal and the a priori information of coded bits. Its output is represented by the extrinsic information of coded bits which, after deinterleaving, becomes intrinsic information for the SISO NSC. The SISO NSC module outputs an extrinsic information of coded bits (used as a priori information in the next iteration at the SISO demapper input) and an extrinsic information of data bits (used to recover the data bits at the last iteration).
+The turbo receiver uses a SISO demapper module and a SISO NSC module. The SISO demapper module decodes both the ST block code and the MIMO channel. It uses at its input the received complex signal and the a priori information of coded bits. Its output is represented by the extrinsic information of coded bits which, after deinterleaving, becomes intrinsic information for the SISO NSC. The SISO NSC module outputs an extrinsic information of coded bits (used as a priori information in the next iteration at the SISO demapper input) and an extrinsic information of data bits (used to recover the data bits at the last iteration).
 
 [http://turbosiso.googlecode.com/svn/wiki/bicm_rec.jpg]
 
 *Turbo receiver for ST-BICM systems*
 
- Performance of the ST-BICM using different algorithms in the SISO demapper and different ST block codes are presented below. Note that the peformances of GA and MMSE PIC algorithms are very close, but the algorithm complexity is a function of system parameters.
+Performance of the ST-BICM using different algorithms in the SISO demapper and different ST block codes are presented below. Note that the peformances of GA and MMSE PIC algorithms are very close, but the algorithm complexity is a function of system parameters.
 
 [http://turbosiso.googlecode.com/svn/wiki/Golden_maxlogMAP_Hassibi.jpg]
 
@@ -40,7 +40,7 @@ The Space Time Bit Interleaved Coded Modulation (ST-BICM) system is a generalisa
 
 *Performance of the ST-BICM using Alamouti code and max log MAP algorithm*
 
- Program used to obtain the figures: [http://turbosiso.googlecode.com/svn/trunk/STBICM.cpp STBICM.cpp].
+Program used to obtain the figures: [http://turbosiso.googlecode.com/svn/trunk/STBICM.cpp STBICM.cpp].
 
 *Reference:*
 
