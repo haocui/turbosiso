@@ -71,7 +71,7 @@ When the BPSK modulated received symbols, [http://turbosiso.googlecode.com/svn/w
 
 , where [http://turbosiso.googlecode.com/svn/wiki/form_16.png] is the variance of the Additive White Gaussian Noise (AWGN). The sign minus in the above expression comes from the way the BPSK mapping is done: [http://turbosiso.googlecode.com/svn/wiki/form_17.png] and [http://turbosiso.googlecode.com/svn/wiki/form_18.png].
 
-For an usage example see [http://turbosiso.googlecode.com/svn/wiki/pccc.wiki Parallel Concatenated Convolutional Codes].
+For an usage example see [pccc Parallel Concatenated Convolutional Codes].
 
 *- decoder for NSC codes*
 
