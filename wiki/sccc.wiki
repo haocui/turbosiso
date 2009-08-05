@@ -1,9 +1,4 @@
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html Main Page]
-  * [http://turbosiso.googlecode.com/svn/wiki/pages.html Related Pages]
-  * [http://turbosiso.googlecode.com/svn/wiki/namespaces.html Namespaces]
-  * [http://turbosiso.googlecode.com/svn/wiki/annotated.html Classes]
-  * [http://turbosiso.googlecode.com/svn/wiki/files.html Files]
-  * || Search for ||  ||
+#summary Serial Concatenated Convolutional Codes
 
 = Serial Concatenated Convolutional Codes of coding rate 1/4 =
 
@@ -29,9 +24,8 @@ The Serial Concatenated Convolutional Codes (SCCCs) are realized with a Non-recu
 
 *Performance of the turbo decoder for SCCC using log MAP algorithm*
 
- Program used to obtain the figures: [http://turbosiso.googlecode.com/svn/wiki/sccc_8cpp.html sccc.cpp].
+ Program used to obtain the figures: [http://turbosiso.googlecode.com/svn/trunk/sccc.cpp sccc.cpp].
 
-Reference: S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
+*Reference: *
 
-----
-Generated on Wed Aug 5 00:07:50 2009 for SISO by  [http://www.doxygen.org/index.html  [http://turbosiso.googlecode.com/svn/wiki/doxygen.png]] 1.5.6
+S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
