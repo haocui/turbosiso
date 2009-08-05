@@ -6,7 +6,7 @@
 
 Within the *SISO class*, the following SISO modules are implemented:
 
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_RSC decoder for Recursive Systematic Convolutional (RSC) codes]
+  * [SISOindex#SISO_RSC decoder for Recursive Systematic Convolutional (RSC) codes]
   * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_NSC decoder for Non-recursive non-Systematic Convolutional (NSC) codes]
   * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_equalizer equalizer for multipath channels (without and with precoding)]
   * [http://turbosiso.googlecode.com/svn/wiki/index.html#SISO_descrambler descrambler for Interleave Division Multiple Access (IDMA) systems]
