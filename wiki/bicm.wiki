@@ -1,9 +1,4 @@
-  * [http://turbosiso.googlecode.com/svn/wiki/index.html Main Page]
-  * [http://turbosiso.googlecode.com/svn/wiki/pages.html Related Pages]
-  * [http://turbosiso.googlecode.com/svn/wiki/namespaces.html Namespaces]
-  * [http://turbosiso.googlecode.com/svn/wiki/annotated.html Classes]
-  * [http://turbosiso.googlecode.com/svn/wiki/files.html Files]
-  * || Search for ||  ||
+#summary Bit Interleaved Coded Modulation
 
 = Bit Interleaved Coded Modulation =
 
@@ -45,9 +40,8 @@ Simulation times for BICM in C++ and Matlab
 || *max log MAP* || 43 min, 51 sec || 52 min, 20 sec ||
 || *log MAP* || 1 hr, 10 min, 53 sec || 1 hr, 16 min, 33 sec ||
 
-Programs used to obtain the figures: [http://turbosiso.googlecode.com/svn/wiki/BICM_8cpp.html BICM.cpp] and [http://turbosiso.googlecode.com/svn/wiki/BICM_8m.html BICM.m].
+Programs used to obtain the figures: [http://turbosiso.googlecode.com/svn/trunk/BICM.cpp BICM.cpp] and [http://turbosiso.googlecode.com/svn/trunk/BICM.m BICM.m].
 
-Reference: A. Tonello, ''Space-time bit-interleaved coded modulation with an iterative decoding strategy,`` in Vehicular Technology Conference, vol. 1, pp. 473-478 vol.1, 2000
+*Reference:*
 
-----
-Generated on Wed Aug 5 00:07:50 2009 for SISO by  [http://www.doxygen.org/index.html  [http://turbosiso.googlecode.com/svn/wiki/doxygen.png]] 1.5.6
+A. Tonello, ''Space-time bit-interleaved coded modulation with an iterative decoding strategy,`` in Vehicular Technology Conference, vol. 1, pp. 473-478 vol.1, 2000
