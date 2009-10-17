@@ -10,6 +10,7 @@
 
 #include "itpp/itbase.h"
 #include "itpp/itcomm.h"//for BPSK and BERC classes
+#include "Progress_Timer.h"
 
 using namespace itpp;
 using std::cout;
@@ -55,7 +56,7 @@ int main(void)
     turbo.set_parameters(gen, gen, constaint_length, perm, nb_iter, metric);
 
     //main loop
-    Progress_Timer timer;//progress timer
+    tr::Progress_Timer timer;//progress timer
     timer.set_max(snr_len);
     timer.progress(0.0);
     for (en=0;en<snr_len;en++)

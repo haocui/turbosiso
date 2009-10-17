@@ -1,57 +1,35 @@
-#main program
-#PROGRAM			=		pccc
-#PROGRAM			=		IDMA
-#PROGRAM				=		TC_mud
-PROGRAM				=		BICM
+# Use 'make program_name' for single program compilation 
 
-#dependences
+#test program name
+TESTS			=		pccc sccc equalizer IDMA BICM STBICM EXIT_pccc\
+						sova_example
+
+#SISO class path
 VPATH			=		/home/bogdan/C++/SISO
-ifeq (${PROGRAM}, pccc)
-DEPS			=		SISO_rsc
-endif
-ifeq (${PROGRAM}, IDMA)
-DEPS			=		SISO_nsc SISO_mud
-endif
-ifeq (${PROGRAM}, TC_mud)
-DEPS			=		SISO_mud
-endif
-ifeq (${PROGRAM}, BICM)
-DEPS			=		SISO_nsc SISO_dem
-endif
 
 #compiler options
 CXX 			=		gcc
 CXXFLAGS 		= 		`itpp-config --cflags-opt` -I$(VPATH)
-LDFLAGS			=		`itpp-config --libs-opt`
-#DBGFLAGS 		= 		`itpp-config --cflags-debug` -I$(VPATH)
-DBGFLAGS 		= 		-I/usr/local/include -Wall -ggdb -O0 -pipe -I$(VPATH)
-DBGLIBS 		= 		`itpp-config --libs-debug`
+LDFLAGS			=		`itpp-config --libs-opt` -L$(VPATH) -lsiso
+CXXFLAGS_DEBUG 	= 		-I/usr/local/include -Wall -ggdb -O0 -pipe -I$(VPATH)
+LDFLAGS_DEBUG 	= 		`itpp-config --libs-debug` -L$(VPATH) -lsiso_debug
 
 #additional file names
-PROGRAM.o       =       $(addsuffix .o, ${PROGRAM})
-PROGRAM_d.o     =       $(addsuffix _d.o, ${PROGRAM})
-PROGRAM_d       =       $(addsuffix _d, ${PROGRAM})
-DEPS.o			= 	 	$(addsuffix .o, $(DEPS))
-DEPS_d.o		=		$(addsuffix _d.o, $(DEPS))
+TESTS.o			= 	 	$(addsuffix .o, $(TESTS))
+TESTS_d			= 	 	$(addsuffix _d, $(TESTS))
 
 #target definition
-.PHONY : all debug profile clean
+.PHONY : all clean debug
 
-%.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+#multiple program compilation (implicit rules are used)
+all : $(TESTS)
 
-$(PROGRAM) : $(PROGRAM.o) $(DEPS.o)
-	$(CXX) $(PROGRAM.o) $(DEPS.o) $(LDFLAGS) -o $(PROGRAM)
+#debug program compilation
+debug : $(TESTS_d)
 
-all : $(PROGRAM)
+%_d : %.cpp
+	$(CXX) $(CXXFLAGS_DEBUG) $< $(LDFLAGS_DEBUG) -o $@
 
-%_d.o : %.cpp
-	$(CXX) -c $(DBGFLAGS) $< -o $@
-
-$(PROGRAM_d) : $(PROGRAM_d.o) $(DEPS_d.o)
-	$(CXX) $(PROGRAM_d.o) $(DEPS_d.o) $(DBGLIBS) -o $(PROGRAM_d)
-
-debug : $(PROGRAM_d)
-
+#delete all
 clean :
-	$(RM) $(PROGRAM) $(PROGRAM_d) $(PROGRAM_d.o) $(PROGRAM.o) $(DEPS.o) $(DEPS_d.o)
+	$(RM) *.o $(TESTS) $(TESTS_d)

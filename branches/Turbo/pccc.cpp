@@ -12,6 +12,7 @@
 
 #include "itpp/itcomm.h"
 #include "SISO.h"
+#include "Progress_Timer.h"
 
 using namespace itpp;
 using tr::SISO;
@@ -23,13 +24,13 @@ using std::string;
 int main(void)
 {
     //general parameters
-    double threshold_value = 50;
-    string map_metric="logMAP";
-    ivec gen = "07 05";//octal form
-    int constraint_length = 3;
-    int nb_errors_lim = 1500;
+    double threshold_value = 100;
+    string map_metric="SOVA";
+    ivec gen = "013 015";//octal form
+    int constraint_length = 4;
+    int nb_errors_lim = 3000;
     int nb_bits_lim = int(1e6);
-    int perm_len = 10000;//total number of bits in a block (with tail)
+    int perm_len = int(1<<16);//total number of bits in a block (with tail)
     int nb_iter = 10;//number of iterations in the turbo decoder
     vec EbN0_dB = "0:0.1:5";
     double R = 1.0/3.0;//coding rate (non punctured PCCC)
@@ -78,12 +79,13 @@ int main(void)
     SISO siso;
     siso.set_generators(gen, constraint_length);
     siso.set_map_metric(map_metric);
+    siso.set_sova_win_len(5*constraint_length);//SOVA only
 
     //BER
     BERC berc;
 
     //Progress timer
-    Progress_Timer timer;
+    tr::Progress_Timer timer;
     timer.set_max(snr_len);
 
     //Randomize generators
@@ -134,13 +136,14 @@ int main(void)
             for (n=0;n<nb_iter;n++)
             {
                 //first decoder
-                siso.rsc(extrinsic_coded, extrinsic_data, dec1_intrinsic_coded, apriori_data, true);
+                //siso.rsc(extrinsic_coded, extrinsic_data, dec1_intrinsic_coded, apriori_data, true);
+            	siso.rsc(extrinsic_coded, extrinsic_data, dec1_intrinsic_coded, apriori_data);
                 //interleave
                 apriori_data = extrinsic_data(perm);
                 //threshold
                 apriori_data = threshold(apriori_data, threshold_value);
                 //second decoder
-                siso.rsc(extrinsic_coded, extrinsic_data, dec2_intrinsic_coded, apriori_data, false);
+                siso.rsc(extrinsic_coded, extrinsic_data, dec2_intrinsic_coded, apriori_data);
 
                 //decision
                 apriori_data += extrinsic_data;//a posteriori information

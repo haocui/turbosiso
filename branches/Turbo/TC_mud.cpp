@@ -13,6 +13,7 @@
 #include "itpp/itcomm.h"
 #include "SISO.h"//SISO class
 #include "EXIT.cpp"//EXIT class
+#include "Progress_Timer.h"
 
 using namespace itpp;
 using tr::SISO;
@@ -100,7 +101,7 @@ int main(void)
     EXIT exit;
 
     //progress timer
-    Progress_Timer timer;
+    tr::Progress_Timer timer;
     timer.set_max(sigma2A_len);
 
     //Randomize generators

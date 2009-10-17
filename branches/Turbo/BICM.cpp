@@ -12,6 +12,7 @@
 
 #include "itpp/itcomm.h"//for BPSK and BERC classes
 #include "SISO.h"//SISO class
+#include "Progress_Timer.h"
 
 using namespace itpp;
 using tr::SISO;
@@ -91,7 +92,7 @@ int main(void)
     BERC berc;
 
     //progress timer
-    Progress_Timer timer;
+    tr::Progress_Timer timer;
     timer.set_max(snr_len);
         
     //Randomize generators

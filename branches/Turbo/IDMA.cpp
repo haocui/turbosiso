@@ -11,6 +11,7 @@
 
 #include "itpp/itcomm.h"
 #include "SISO.h"//SISO class
+#include "Progress_Timer.h"
 
 /// Kronecker operator for vectors (both inputs are seen as column or row vectors)
 template <class Num_T>
@@ -34,7 +35,7 @@ using std::string;
 int main(void)
 {
     //general parameters
-    string mud_method = "sGCD";
+    string mud_method = "maxlogTMAP";
     int nb_usr = 2;
     int spreading_factor = 16;
 #ifdef USE_CC
@@ -49,7 +50,7 @@ int main(void)
     int nb_bits_lim = int(1e3);//int(1e6);
     int perm_len = 1024;//38400;//permutation length
     int nb_iter = 15;//number of iterations in the turbo decoder
-    vec EbN0_dB = "0:10:20";
+    vec EbN0_dB = "10";//"0:10:20";
     double Ec = 1.0;//chip energy
 
 #ifdef USE_CC
@@ -136,7 +137,7 @@ int main(void)
 	BERC berc;
 
     //progress timer
-    Progress_Timer timer;
+    tr::Progress_Timer timer;
     timer.set_max(snr_len);
 
     //Randomize generators
@@ -251,4 +252,3 @@ int main(void)
 
     return 0;
 }
-
