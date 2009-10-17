@@ -30,6 +30,7 @@ void SISO::gen_chtrellis(void)
 
     //initialize trellis
     itpp::ivec enc_mem(equiv_ch_mem_len);
+#pragma omp parallel for private(n,enc_mem,k,feedback,j)
     for (n=0;n<chtrellis.stateNb;n++) //initial state
     {
         enc_mem = 1-2*itpp::to_ivec(itpp::dec2bin(equiv_ch_mem_len, n));//1->-1, 0->+1
@@ -54,6 +55,7 @@ void SISO::gen_chtrellis(void)
         }
     }
 
+#pragma omp parallel for private(j,index,n,k)
     for (j=0;j<chtrellis.stateNb;j++)
     {
         index = 0;
@@ -99,12 +101,15 @@ void SISO::equalizer_logMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_sig,
     A[0] = 0;
     B[N*chtrellis.stateNb] = 0;
     sum = (tail?-INFINITY:0);
+#pragma omp parallel for private(n)
     for (n=1;n<chtrellis.stateNb;n++)
     {
         A[n] = -INFINITY;
         B[n+N*chtrellis.stateNb] = sum;//if tail==false the final state is not known
     }
 
+#pragma omp parallel sections private(n,sum,m,k,C)
+{
     //forward recursion
     for (n=1;n<=N;n++)
     {
@@ -129,6 +134,7 @@ void SISO::equalizer_logMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_sig,
     }
 
     //backward recursion
+#pragma omp section
     for (n=N-1;n>=0;n--)
     {
     	sum = 0;//normalisation factor
@@ -149,9 +155,11 @@ void SISO::equalizer_logMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_sig,
             B[m+n*chtrellis.stateNb] -= sum;
         }
     }
+}
 
     //compute extrinsic_data
     extrinsic_data.set_size(N);
+#pragma omp parallel for private(n,sum,sumbis,m,k,nstates,C,buffer)
     for (n=1;n<=N;n++)
     {
         sum = 0;//could be replaced by a vector
@@ -213,6 +221,8 @@ void SISO::equalizer_maxlogMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_s
     for (n=1;n<chtrellis.stateNb;n++)
         B[n+N*chtrellis.stateNb] = sum;//if tail==false the final state is not known
 
+#pragma omp parallel sections private(n,sum,m,k,C)
+{
     //forward recursion
     for (n=1;n<=N;n++)
     {
@@ -233,6 +243,7 @@ void SISO::equalizer_maxlogMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_s
     }
 
     //backward recursion
+#pragma omp section
     for (n=N-1;n>=0;n--)
     {
     	sum = -INFINITY;//normalisation factor
@@ -249,6 +260,7 @@ void SISO::equalizer_maxlogMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_s
         for (m=0;m<chtrellis.stateNb;m++)
             B[m+n*chtrellis.stateNb] -= sum;
     }
+}
 
     //compute extrinsic_data
     extrinsic_data.set_size(N);

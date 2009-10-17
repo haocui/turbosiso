@@ -25,7 +25,7 @@ namespace tr
  *- demappers for Bit Interleaved Coded Modulation (BICM) systems
  *- demappers for Space Time (ST) BICM systems
  *
- * BPSK mapping is realized as follows: 0 -> 1 and 1 -> -1. Thus the xor truth table is preserved when multiplying BPSK symbols.
+ * BPSK mapping is realized as follows: 0 -> +1 and 1 -> -1. Thus the xor truth table is preserved when multiplying BPSK symbols.
  */
 class SISO
 {
@@ -44,6 +44,9 @@ public:
     /** Possible input values are:
      * - logMAP
      * - maxlogMAP
+     * - SOVA
+     * Soft Output Viterbi Algorithm (SOVA) is equivalent to the MAP algorithm
+     * only when the a priori information is zero.
      */
     void set_map_metric(const std::string &in_MAP_metric);
     /// Sets the precoder generator polynomial for turbo equalizer
@@ -63,6 +66,8 @@ public:
      * If the input value is true, the trellis is terminated. In order to terminate the trellis an ending bit tail is added to the input stream of the encoder.
      */
     void set_tail(const bool &in_tail);
+    /// Sets the length of the trellis used by the SOVA algorithm
+    void set_sova_win_len(const int &win_len);
     //channel setup functions
     /// Sets Additive White Gaussian Noise variance for each dimension
     void set_noise(const double &in_sigma2);
@@ -97,6 +102,7 @@ public:
     /// Sets Multi-User Detector method
     /** Possible input values are:
      * - maxlogMAP
+     * - maxlogTMAP
      * - GCD
      * - sGCD (simplified GCD)
      */
@@ -198,6 +204,12 @@ private:
     void rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
     /// SISO::rsc using maxlogMAP algorithm
     void rsc_maxlogMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
+    /// SISO::rsc using %SOVA
+    void rsc_sova(itpp::vec &extrinsic_data, ///< extrinsic information of data bits
+    		 const itpp::vec &intrinsic_coded, ///< intrinsic information of coded bits
+    		 const itpp::vec &apriori_data, ///< a priori information of data bits
+    		 const int &win_len ///< window length used to represent the trellis
+    		);
     /// SISO::nsc using logMAP algorithm
     void nsc_logMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
     /// SISO::nsc using maxlogMAP algorithm
@@ -244,6 +256,9 @@ private:
     itpp::bvec prec_gen;
     /// True if trellis of CC is terminated
     bool tail;
+    // SOVA variable
+    /// SOVA trellis window length
+    int SOVA_win_len;
     //channel variables
     /// AWGN noise variance
     double sigma2;
@@ -336,6 +351,7 @@ inline SISO::SISO()
     scrambler_pattern = "0";//corresponds to +1 using BPSK mapping
     prec_gen = "1";
     demapper_method = "GA";
+    SOVA_win_len = 20;//should be set according to the generator polynomials
 }
 
 inline void SISO::set_map_metric(const std::string &in_MAP_metric)
@@ -369,6 +385,11 @@ inline void SISO::set_generators(const itpp::ivec &in_gen, const int &constraint
 inline void SISO::set_tail(const bool &in_tail)
 {
     tail = in_tail;
+}
+
+inline void SISO::set_sova_win_len(const int &win_len)
+{
+	SOVA_win_len = win_len;
 }
 
 inline void SISO::set_noise(const double &in_sigma2)
@@ -468,11 +489,19 @@ inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, co
 	}
 
 	if (MAP_metric=="logMAP")
+	{
 		rsc_logMAP(extrinsic_parity, extrinsic_data, intrinsic_coded, apriori_data);
-	else if (MAP_metric=="maxlogMAP")
+	} else if (MAP_metric=="maxlogMAP")
+	{
 		rsc_maxlogMAP(extrinsic_parity, extrinsic_data, intrinsic_coded, apriori_data);
-	else
-		print_err_msg("SISO::rsc: unknown MAP metric. The MAP metric should be either logMAP or maxlogMAP");
+	} else if (MAP_metric=="SOVA")
+	{
+		//no extrinsic information for parity bits is provided
+		rsc_sova(extrinsic_data, intrinsic_coded, apriori_data, SOVA_win_len);
+	} else
+	{
+		print_err_msg("SISO::rsc: unknown MAP metric. The MAP metric should be either logMAP or maxlogMAP or SOVA");
+	}
 }
 
 inline void SISO::nsc(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data, const bool &tail)

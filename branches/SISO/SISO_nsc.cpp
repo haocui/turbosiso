@@ -116,6 +116,8 @@ void SISO::nsc_logMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, con
         B[n+N*nsctrellis.stateNb] = sum;//if tail==false the final state is not known
     }
 
+#pragma omp parallel sections private(n,sum,m,k,i,j,C)
+{
     //forward recursion
     for (n=1;n<(N+1);n++)
     {
@@ -154,6 +156,7 @@ void SISO::nsc_logMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, con
     }
 
     //backward recursion
+#pragma omp section
     for (n=N-1;n>=0;n--)
     {
     	sum = 0;//normalisation factor
@@ -188,6 +191,7 @@ void SISO::nsc_logMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, con
             B[m+n*nsctrellis.stateNb] -= sum;
         }
     }
+}
 
     //compute extrinsic_data
     extrinsic_data.set_size(N);
@@ -208,7 +212,6 @@ void SISO::nsc_logMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, con
     double *sum0 = new double[r];
     double *sum1 = new double[r];
     extrinsic_coded.set_size(N*Nc*r);
-#pragma omp parallel for private(n,k,mp,i,m,j,index,C) firstprivate(sum0,sum1)
     for (n=0;n<N;n++)
     {
         for (k=0;k<r;k++)
@@ -306,6 +309,8 @@ void SISO::nsc_maxlogMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, 
     }
 
     //forward recursion
+#pragma omp parallel sections private(n,sum,m,k,i,j,C)
+{
     for (n=1;n<(N+1);n++)
     {
     	sum = -INFINITY;//normalisation factor
@@ -342,6 +347,7 @@ void SISO::nsc_maxlogMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, 
     }
 
     //backward recursion
+#pragma omp section
     for (n=N-1;n>=0;n--)
     {
     	sum = -INFINITY;//normalisation factor
@@ -375,6 +381,7 @@ void SISO::nsc_maxlogMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, 
             B[m+n*nsctrellis.stateNb] -= sum;
         }
     }
+}
 
     //compute extrinsic_data
     extrinsic_data.set_size(N);
@@ -395,7 +402,6 @@ void SISO::nsc_maxlogMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, 
     double *sum0 = new double[r];
     double *sum1 = new double[r];
     extrinsic_coded.set_size(N*Nc*r);
-#pragma omp parallel for private(n,k,mp,i,m,j,index,C) firstprivate(sum0,sum1)
     for (n=0;n<N;n++)
     {
         for (k=0;k<r;k++)

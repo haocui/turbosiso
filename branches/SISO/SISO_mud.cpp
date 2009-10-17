@@ -207,6 +207,8 @@ void SISO::mud_maxlogMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, co
     register int s,k;
     int sp,i;
     itpp::bvec in_chips(nb_usr);
+#pragma omp parallel sections private(n,buffer,s,k,sp,in_chips)
+{
     for(n=1;n<=block_len;n++)
     {
         buffer = -INFINITY;//normalization factor
@@ -225,7 +227,6 @@ void SISO::mud_maxlogMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, co
             buffer = std::max(buffer, A[s+n*chtrellis.stateNb]);
         }
         //normalization
-#pragma omp parallel for private(s)
         for(s=0;s<chtrellis.stateNb;s++)
         {
             A[s+n*chtrellis.stateNb] -= buffer;
@@ -233,6 +234,7 @@ void SISO::mud_maxlogMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, co
     }
 
     //compute log(beta) (backward recursion)
+#pragma omp section
     for(n=block_len-1;n>=0;n--)
     {
         buffer = -INFINITY;//normalization factor
@@ -250,12 +252,12 @@ void SISO::mud_maxlogMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, co
             buffer = std::max(buffer, B[s+n*chtrellis.stateNb]);
         }
         //normalization
-#pragma omp parallel for private(s)
         for(s=0;s<chtrellis.stateNb;s++)
         {
             B[s+n*chtrellis.stateNb] -= buffer;
         }
     }
+}
 
     //compute extrinsic information
     double nom, denom;
@@ -350,6 +352,8 @@ void SISO::mud_maxlogTMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, c
     register int s,k;
     int sp,i;
     itpp::bvec in_chips(nb_usr);
+#pragma omp parallel sections private(n,buffer,s,k,sp,in_chips)
+{
     for(n=1;n<=block_len;n++)
     {
         buffer = -INFINITY;//normalization factor
@@ -368,8 +372,12 @@ void SISO::mud_maxlogTMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, c
             }
             buffer = std::max(buffer, A[s+n*chtrellis.stateNb]);
         }
+        //don't normalize if buffer = -INFINITY
+        if(buffer==-INFINITY)
+        {
+        	continue;
+        }
         //normalization
-#pragma omp parallel for private(s)
         for(s=0;s<chtrellis.stateNb;s++)
         {
             A[s+n*chtrellis.stateNb] -= buffer;
@@ -377,6 +385,7 @@ void SISO::mud_maxlogTMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, c
     }
 
     //compute log(beta) (backward recursion)
+#pragma omp section
     for(n=block_len-1;n>=0;n--)
     {
         buffer = -INFINITY;//normalization factor
@@ -394,13 +403,18 @@ void SISO::mud_maxlogTMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, c
             }
             buffer = std::max(buffer, B[s+n*chtrellis.stateNb]);
         }
+        //don't normalize if buffer = -INFINITY
+        if(buffer==-INFINITY)
+        {
+        	continue;
+        }
         //normalization
-#pragma omp parallel for private(s)
         for(s=0;s<chtrellis.stateNb;s++)
         {
             B[s+n*chtrellis.stateNb] -= buffer;
         }
     }
+}
 
     //compute extrinsic information
     double nom, denom;
