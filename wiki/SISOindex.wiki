@@ -67,8 +67,8 @@ Decodes RSC codes of coding rate [http://turbosiso.googlecode.com/svn/wiki/form_
 
   * log MAP `[2]`
   * max log MAP
-  * Soft Output Viterbi Algorithm (SOVA)
-  * Viterbi-based soft output algorithm
+  * Soft Output Viterbi Algorithm (SOVA) `[12]`
+  * Viterbi-based soft output algorithm `[13]`
 
 The trellis describing the RSC code must begin in zero state. The trellis can end in zero state (tail bits must be added to input data bits of the RSC code) or in an unknown state (no tail bits needed).
 
@@ -189,3 +189,7 @@ For an usage example see [bicm Bit Interleaved Coded Modulation] or [stbicm Spac
 `[10]` B. Hassibi and B. M. Hochwald, ''High-rate codes that are linear in space and time,`` IEEE Transactions on Information Theory, vol. 48, pp. 1804-1824, July 2002
 
 `[11]` S. ten Brink, ''Convergence behavior of iteratively decoded parallel concatenated codes,`` IEEE Transactions on Communications, vol. 49, pp. 1727-1737, Oct. 2001
+
+`[12]` J. Hagenauer and P. Hoeher, ''A Viterbi algorithm with soft-decision outputs and its applications,`` in Global Telecommunications Conference, 1989
+
+`[13]` M. Kerner and O. Amrani, ''Iterative Decoding Using Optimum Soft Input - Hard Output Module,`` IEEE Transactions on Communications, vol. 57, no. 7, pp. 1881-1885, Jul. 2009 
