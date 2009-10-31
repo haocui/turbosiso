@@ -57,14 +57,16 @@ void SISO::gen_rsctrellis(void)
 	}
 }
 
-void SISO::rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
+void SISO::rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
 /*
  logMAP (SISO) decoder for RSC of rate 1/2
  extrinsic_parity - extrinsic information of parity bits
  extrinsic_data - extrinsic information of data (informational) bits
  intrinsic_coded - intrinsic information of coded (systematic and parity) bits
  apriori_data - a priori information of data (informational) bits
- Reference: Steven S. Pietrobon and Adrian S. Barbulescu, "A simplification of the modified Bahl decoding algorithm for systematic convolutional codes", Proc. ISITA, 1994
+ Reference: Steven S. Pietrobon and Adrian S. Barbulescu, "A simplification of
+ the modified Bahl decoding algorithm for systematic convolutional codes", Proc. ISITA, 1994
  */
 {
 	//get parameters
@@ -119,7 +121,8 @@ void SISO::rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, co
 			buffer = itpp::log_add(A0[rsctrellis.prevStates[k]+(n-1)*rsctrellis.numStates],
 					A1[rsctrellis.prevStates[k+rsctrellis.numStates]+(n-1)*rsctrellis.numStates]);//log(alpha0+alpha1)
 			A0[k+rsctrellis.numStates*n] = Lc2I[n]*rsctrellis.PARout[k]+buffer;
-			A1[k+rsctrellis.numStates*n] = Lc1I[n]+apriori_data[n]+Lc2I[n]*rsctrellis.PARout[k+rsctrellis.numStates]+buffer;
+			A1[k+rsctrellis.numStates*n] = Lc1I[n]+apriori_data[n]+
+					Lc2I[n]*rsctrellis.PARout[k+rsctrellis.numStates]+buffer;
 			//find min A(:,n)
 			A_min = std::min(A_min, A0[k+rsctrellis.numStates*n]);
 			//find max A(:,n)
@@ -146,11 +149,15 @@ void SISO::rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, co
 		for (k=0;k<rsctrellis.numStates;k++)
 		{
 			index = rsctrellis.nextStates[k];
-			B0[k+rsctrellis.numStates*n] = itpp::log_add(B0[index+(n+1)*rsctrellis.numStates]+Lc2I[n+1]*rsctrellis.PARout[index],
-					B1[index+(n+1)*rsctrellis.numStates]+Lc1I[n+1]+apriori_data[n+1]+Lc2I[n+1]*rsctrellis.PARout[index+rsctrellis.numStates]);
+			B0[k+rsctrellis.numStates*n] = itpp::log_add(B0[index+(n+1)*rsctrellis.numStates]+
+					Lc2I[n+1]*rsctrellis.PARout[index],
+					B1[index+(n+1)*rsctrellis.numStates]+
+					Lc1I[n+1]+apriori_data[n+1]+Lc2I[n+1]*rsctrellis.PARout[index+rsctrellis.numStates]);
 			index = rsctrellis.nextStates[k+rsctrellis.numStates];
-			B1[k+rsctrellis.numStates*n] = itpp::log_add(B0[index+(n+1)*rsctrellis.numStates]+Lc2I[n+1]*rsctrellis.PARout[index],
-					B1[index+(n+1)*rsctrellis.numStates]+Lc1I[n+1]+apriori_data[n+1]+Lc2I[n+1]*rsctrellis.PARout[index+rsctrellis.numStates]);
+			B1[k+rsctrellis.numStates*n] = itpp::log_add(B0[index+(n+1)*rsctrellis.numStates]+
+					Lc2I[n+1]*rsctrellis.PARout[index],
+					B1[index+(n+1)*rsctrellis.numStates]+
+					Lc1I[n+1]+apriori_data[n+1]+Lc2I[n+1]*rsctrellis.PARout[index+rsctrellis.numStates]);
 
 		}
 		if (isinf(A_mid[n+1]))
@@ -217,14 +224,17 @@ void SISO::rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, co
 	delete[] B1;
 }
 
-void SISO::rsc_maxlogMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
+void SISO::rsc_maxlogMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
 /*
  maxlogMAP (SISO) decoder for RSC of rate 1/2
  extrinsic_parity - extrinsic information of parity bits
  extrinsic_data - extrinsic information of data (informational) bits
  intrinsic_coded - intrinsic information of coded (systematic and parity) bits
  apriori_data - a priori information of data (informational) bits
- Reference: Steven S. Pietrobon and Adrian S. Barbulescu, "A simplification of the modified Bahl decoding algorithm for systematic convolutional codes", Proc. ISITA, 1994*/
+ Reference: Steven S. Pietrobon and Adrian S. Barbulescu, "A simplification of
+ the modified Bahl decoding algorithm for systematic convolutional codes", Proc. ISITA, 1994
+ */
 {
 	//get parameters
 	int N = apriori_data.length();
@@ -278,7 +288,8 @@ void SISO::rsc_maxlogMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
 			buffer = std::max(A0[rsctrellis.prevStates[k]+(n-1)*rsctrellis.numStates],
 					A1[rsctrellis.prevStates[k+rsctrellis.numStates]+(n-1)*rsctrellis.numStates]);//log(alpha0+alpha1)
 			A0[k+rsctrellis.numStates*n] = Lc2I[n]*rsctrellis.PARout[k]+buffer;
-			A1[k+rsctrellis.numStates*n] = Lc1I[n]+apriori_data[n]+Lc2I[n]*rsctrellis.PARout[k+rsctrellis.numStates]+buffer;
+			A1[k+rsctrellis.numStates*n] = Lc1I[n]+apriori_data[n]+
+					Lc2I[n]*rsctrellis.PARout[k+rsctrellis.numStates]+buffer;
 			//find min A(:,n)
 			A_min = std::min(A_min, A0[k+rsctrellis.numStates*n]);
 			//find max A(:,n)
@@ -302,11 +313,15 @@ void SISO::rsc_maxlogMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
 		for (k=0;k<rsctrellis.numStates;k++)
 		{
 			index = rsctrellis.nextStates[k];
-			B0[k+rsctrellis.numStates*n] = std::max(B0[index+(n+1)*rsctrellis.numStates]+Lc2I[n+1]*rsctrellis.PARout[index],
-					B1[index+(n+1)*rsctrellis.numStates]+Lc1I[n+1]+apriori_data[n+1]+Lc2I[n+1]*rsctrellis.PARout[index+rsctrellis.numStates]);
+			B0[k+rsctrellis.numStates*n] = std::max(B0[index+(n+1)*rsctrellis.numStates]+
+					Lc2I[n+1]*rsctrellis.PARout[index],
+					B1[index+(n+1)*rsctrellis.numStates]+
+					Lc1I[n+1]+apriori_data[n+1]+Lc2I[n+1]*rsctrellis.PARout[index+rsctrellis.numStates]);
 			index = rsctrellis.nextStates[k+rsctrellis.numStates];
-			B1[k+rsctrellis.numStates*n] = std::max(B0[index+(n+1)*rsctrellis.numStates]+Lc2I[n+1]*rsctrellis.PARout[index],
-					B1[index+(n+1)*rsctrellis.numStates]+Lc1I[n+1]+apriori_data[n+1]+Lc2I[n+1]*rsctrellis.PARout[index+rsctrellis.numStates]);
+			B1[k+rsctrellis.numStates*n] = std::max(B0[index+(n+1)*rsctrellis.numStates]+
+					Lc2I[n+1]*rsctrellis.PARout[index],
+					B1[index+(n+1)*rsctrellis.numStates]+
+					Lc1I[n+1]+apriori_data[n+1]+Lc2I[n+1]*rsctrellis.PARout[index+rsctrellis.numStates]);
 
 		}
 		if (isinf(A_mid[n+1]))
@@ -382,6 +397,9 @@ void SISO::rsc_sova(itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded,
  * It is assumed that the BPSK mapping is: 0 -> +1, 1 -> -1.
  * Changes have been made to adapt the code for RSC codes of rate 1/2
  * and for soft input informations.
+ * Improved SOVA has been implemented using a scaling factor and threshold for
+ * the reliability information (see Wang [2003]). Even so, PCCC performance
+ * are close to the original SOVA.
  */
 {
 	//number of code outputs
@@ -527,7 +545,157 @@ void SISO::rsc_sova(itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded,
 	}
 
 	// provide soft output with +/- sign:
-	extrinsic_data = itpp::elem_mult((2.0*extrinsic_data-1.0), sft)-apriori_data;
+	sft = tr::threshold(sft, SOVA_threshold);
+	extrinsic_data =
+			itpp::elem_mult((2.0*extrinsic_data-1.0), SOVA_scaling_factor*sft)-apriori_data;
+
+	//free trellis memory
+	delete[] rsctrellis.prevStates;
+	delete[] rsctrellis.nextStates;
+	delete[] rsctrellis.PARout;
+	delete[] rsctrellis.fm;
+}
+
+void SISO::rsc_viterbi(itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded,
+		const itpp::vec &apriori_data, const int &win_len)
+/* Soft Input Soft Output module based on Viterbi algorithm
+ * Output: extrinsic_data - extrinsic information of data bits
+ * Inputs: intrinsic_coded - intrinsic information of data bits
+ * 		   apriori_data - a priori information of data bits
+ *		   win_len - window length used to represent the code trellis
+ *
+ * The implemented algorithm follows M. Kerner and O. Amrani, ''Iterative Decoding
+ * Using Optimum Soft Input - Hard Output Module`` (2009), in:
+ * IEEE Transactions on Communications, 57:7(1881-1885)
+ */
+{
+	//number of code outputs
+	int nb_outputs = gen.rows();
+
+	//setup internal variables based on RSC trellis
+	register int i,j,s;
+	gen_rsctrellis();//trellis generation for 1/2 RSC codes
+	int nb_states = rsctrellis.numStates;
+	itpp::Array<itpp::mat> bin_out(2);//contains code output for each initial state and code input
+	itpp::imat next_state(nb_states,2);//next state in the trellis
+	for(i=0;i<2;i++)
+	{
+		bin_out(i).set_size(nb_states, nb_outputs);
+		for(j=0;j<nb_states;j++)
+		{
+			bin_out(i)(j,0) = double(i);//systematic bit
+			bin_out(i)(j,1) = rsctrellis.PARout[j+i*nb_states];//parity bit
+			next_state(j,i) = rsctrellis.nextStates[j+i*nb_states];
+		}
+	}
+	itpp::vec bin_inp("0 1");//binary code inputs
+
+	int len = apriori_data.length();//number of decoding steps (total)
+
+	//allocate memory for the trellis window
+	itpp::mat metr(nb_states,win_len+1);//path metric buffer
+	metr.zeros();
+	metr += -INFINITY;
+	metr(0,0) = 0;//initial state => (0,0)
+	itpp::mat surv(nb_states,win_len+1);//survivor state buffer
+	surv.zeros();
+	itpp::mat inpt(nb_states,win_len+1);//survivor input buffer (dec. output)
+	inpt.zeros();
+
+	//decode all the bits
+	int Cur,Nxt,nxt,sur,b;
+	itpp::vec buf(nb_outputs);
+	double llb,mtr,inp;
+	itpp::vec bin(nb_outputs);
+	itpp::ivec cyclic_buffer(win_len);
+	itpp::bvec hard_output(len);
+	for(i = 0; i < len; i++)
+	{
+	    //indices + precalculations
+		Cur = i%(win_len+1);//curr trellis (cycl. buf) position
+		Nxt = (i+1)%(win_len+1);//next trellis (cycl. buf) position
+		buf = intrinsic_coded(i*nb_outputs,(i+1)*nb_outputs-1);//intrinsic_info portion to be processed
+	    llb = apriori_data(i);//SOVA: apriori_info portion to be processed
+	    metr.set_col(Nxt, -INFINITY*itpp::ones(nb_states));
+
+	    //forward recursion
+	    for(s = 0; s<nb_states; s++)
+	    {
+	        for(j = 0; j<2; j++)
+	        {
+	            nxt = next_state(s,j);//state after transition
+	            bin = bin_out(j).get_row(s);//transition output (encoder)
+	            mtr = bin*buf+metr(s,Cur);//transition metric
+	            mtr += bin_inp(j)*llb;//add a priori info contribution
+
+	            if(metr(nxt,Nxt) < mtr)
+	            {
+	                metr(nxt,Nxt) = mtr;//store the metric
+	                surv(nxt,Nxt) = s;//store the survival state
+	                inpt(nxt,Nxt) = j;//store the survival input
+	            }
+	        }
+	    }
+
+	    //trace backwards
+	    if(i < (win_len-1))
+	    {
+	        continue;
+	    }//proceed if the buffer has been filled
+	    mtr = itpp::max(metr.get_col(Nxt), sur);//find the initial state (max metric)
+	    b = i;//temporary bit index
+        for(j=0; j<win_len; j++)//indices in a 'cyclic buffer' operation
+        {
+        	cyclic_buffer(j) = (Nxt-j)%(win_len+1);
+            cyclic_buffer(j) = (cyclic_buffer(j)<0)?(cyclic_buffer(j)+win_len+1):cyclic_buffer(j);
+        }
+
+	    for(j=0; j<win_len; j++)//for all the bits in the buffer
+	    {
+	        inp = inpt(sur,cyclic_buffer(j));//current bit-decoder output (encoder input)
+	        hard_output(b) = (inp==1.0);//store the hard output
+	        sur = surv(sur, cyclic_buffer(j));//state for the previous surv bit
+	        b--;//update bit index
+	    }
+	}
+
+	// provide soft output (extrinsic information) for informational bits
+	//compute flipped and non-flipped bits positions
+	itpp::bvec tmp(len);
+	for(i=0; i<len; i++)
+	{
+		tmp(i) = ((apriori_data(i)+intrinsic_coded(2*i))>=0)^hard_output(i);
+	}
+	itpp::ivec idx_matching = itpp::find(tmp==itpp::bin(0));
+	itpp::ivec idx_nonmatching = itpp::find(tmp==itpp::bin(1));
+	//Estimated Bit Error Rate
+	int idx_nonmatching_len = idx_nonmatching.length();
+	double error_rate = double(idx_nonmatching_len)/double(len);
+	//Logarithm of Likelihood Ratio
+	double LLR;
+	if(error_rate==0.0)
+	{
+		LLR = std::log(double(len));
+	} else if(error_rate==1.0)
+	{
+		LLR = -std::log(double(len));
+	} else
+	{
+		LLR = std::log((1.0-error_rate)/error_rate);
+	}
+	extrinsic_data.set_size(len);
+	for(i=0; i<idx_matching.length(); i++)
+	{
+		extrinsic_data(idx_matching(i)) = Viterbi_scaling_factor[0]*
+				(2.0*double(hard_output(idx_matching(i)))-1.0)*LLR;
+	}
+	for(i=0; i<idx_nonmatching_len; i++)
+	{
+		extrinsic_data(idx_nonmatching(i)) = Viterbi_scaling_factor[1]*
+				(2.0*double(hard_output(idx_nonmatching(i)))-1.0)*LLR;
+	}
+	//extrinsic information
+	extrinsic_data -= apriori_data;
 
 	//free trellis memory
 	delete[] rsctrellis.prevStates;

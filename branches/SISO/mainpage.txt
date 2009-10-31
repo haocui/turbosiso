@@ -65,6 +65,7 @@
  * - log MAP \ref pietrobon94simplification "[2]"
  * - max log MAP
  * - Soft Output Viterbi Algorithm (SOVA) \ref hagenauer89viterbi "[12]"
+ * - Viterbi-based soft output algorithm
  *
  * The trellis describing the RSC code must begin in zero state. The trellis can 
  * end in zero state (tail bits must be added to input data bits of the RSC code) 

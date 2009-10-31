@@ -24,20 +24,20 @@ using std::string;
 int main(void)
 {
     //general parameters
-    double threshold_value = 100;
+    //double threshold_value = 100;
     string map_metric="SOVA";
-    ivec gen = "013 015";//octal form
+    ivec gen = "013 015";//octal form, feedback first
     int constraint_length = 4;
     int nb_errors_lim = 3000;
     int nb_bits_lim = int(1e6);
-    int perm_len = int(1<<16);//total number of bits in a block (with tail)
+    int perm_len = 3196;//total number of bits in a block (with tail)
     int nb_iter = 10;//number of iterations in the turbo decoder
     vec EbN0_dB = "0:0.1:5";
     double R = 1.0/3.0;//coding rate (non punctured PCCC)
     double Ec = 1.0;//coded bit energy
 
     //other parameters
-    string filename = "Res/pccc_"+map_metric+".it";
+    string filename = "Res/pccc_"+to_str(perm_len)+"_orig"+map_metric+".it";
     int nb_bits = perm_len-(constraint_length-1);//number of bits in a block (without tail)
     vec sigma2 = (0.5*Ec/R)*pow(inv_dB(EbN0_dB), -1.0);//N0/2
     double Lc;//scaling factor
@@ -79,7 +79,9 @@ int main(void)
     SISO siso;
     siso.set_generators(gen, constraint_length);
     siso.set_map_metric(map_metric);
-    siso.set_sova_win_len(5*constraint_length);//SOVA only
+    siso.set_viterbi_win_len(5*constraint_length);//Viterbi & SOVA
+    siso.set_sova_scaling_factor(1);//SOVA only
+    siso.set_sova_threshold(INFINITY);
 
     //BER
     BERC berc;
@@ -141,7 +143,7 @@ int main(void)
                 //interleave
                 apriori_data = extrinsic_data(perm);
                 //threshold
-                apriori_data = threshold(apriori_data, threshold_value);
+                //apriori_data = threshold(apriori_data, threshold_value);
                 //second decoder
                 siso.rsc(extrinsic_coded, extrinsic_data, dec2_intrinsic_coded, apriori_data);
 

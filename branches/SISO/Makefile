@@ -9,6 +9,7 @@ LIBRARY_VERSION =		$(MAJOR_NO).$(MINOR_NO).$(RELEASE_NO)
 
 #additional file names
 COMPONENTS.o       =       $(addsuffix .o, ${COMPONENTS})
+COMPONENTS.cpp       =       $(addsuffix .cpp, ${COMPONENTS})
 COMPONENTS_d.o     =       $(addsuffix _d.o, ${COMPONENTS})
 COMPONENTS_s.o     =       $(addsuffix _s.o, ${COMPONENTS})
 
@@ -30,20 +31,18 @@ lib : $(COMPONENTS.o)
 	ln -sf $(LIBRARY_NAME).so.$(LIBRARY_VERSION) $(LIBRARY_NAME).so.$(MAJOR_NO)
 	ln -sf $(LIBRARY_NAME).so.$(MAJOR_NO) $(LIBRARY_NAME).so
 
-%.o : %.cpp
-	$(CXX) -fPIC -c $(CXXFLAGS) $< -o $@
+$(COMPONENTS.o) : $(COMPONENTS.cpp)
 
-static : $(COMPONENTS_s.o)
-	ar -cr $(LIBRARY_NAME).a $(COMPONENTS_s.o)
-	
-%_s.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $< -o $@	
+%.o : %.cpp
+	$(CXX) -fPIC -c $(CXXFLAGS) $< -o $@	
 
 lib_debug : $(COMPONENTS_d.o)
 	$(CXX) -shared -Wl,-soname,$(LIBRARY_NAME)_debug.so.$(MAJOR_NO) \
 	-o $(LIBRARY_NAME)_debug.so.$(LIBRARY_VERSION) $(COMPONENTS_d.o) $(LDFLAGS_DEBUG)
 	ln -sf $(LIBRARY_NAME)_debug.so.$(LIBRARY_VERSION) $(LIBRARY_NAME)_debug.so.$(MAJOR_NO)
 	ln -sf $(LIBRARY_NAME)_debug.so.$(MAJOR_NO) $(LIBRARY_NAME)_debug.so
+
+$(COMPONENTS_d.o) : $(COMPONENTS.cpp)
 
 %_d.o : %.cpp
 	$(CXX) -fPIC -c $(CXXFLAGS_DEBUG) $< -o $@

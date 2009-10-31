@@ -17,7 +17,7 @@ int main(void)
 {
     //general parameters
     vec sigmaA = "0.01:0.1:7";//standard deviation (sqrt(variance)) of the mutual a priori information
-    string map_metric="maxlogMAP";
+    string map_metric="SOVA";
     ivec gen = "013 015";//octal form
     int constraint_length = 4;
     int nb_blocks_lim = 50;
@@ -64,6 +64,7 @@ int main(void)
     siso.set_generators(gen, constraint_length);
     siso.set_map_metric(map_metric);
     siso.set_sova_win_len(5*constraint_length);//SOVA only
+    //siso.set_sova_scaling_factor(0.8);//SOVA only
     
     //EXIT chart
     EXIT exit;

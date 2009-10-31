@@ -25,7 +25,8 @@ namespace tr
  *- demappers for Bit Interleaved Coded Modulation (BICM) systems
  *- demappers for Space Time (ST) BICM systems
  *
- * BPSK mapping is realized as follows: 0 -> +1 and 1 -> -1. Thus the xor truth table is preserved when multiplying BPSK symbols.
+ * BPSK mapping is realized as follows: 0 -> +1 and 1 -> -1. Thus the xor truth
+ * table is preserved when multiplying BPSK symbols.
  */
 class SISO
 {
@@ -63,11 +64,20 @@ public:
     void set_generators(const itpp::ivec &in_gen, const int &constraint_length);
     /// Signals whether the trellis used in the MAP algorithm is terminated or not (only for convolutional codes and multipath channels)
     /**
-     * If the input value is true, the trellis is terminated. In order to terminate the trellis an ending bit tail is added to the input stream of the encoder.
+     * If the input value is true, the trellis is terminated. In order to terminate
+     * the trellis an ending bit tail is added to the input stream of the encoder.
      */
     void set_tail(const bool &in_tail);
-    /// Sets the length of the trellis used by the SOVA algorithm
-    void set_sova_win_len(const int &win_len);
+    /// Sets the length of the trellis used by the SOVA
+    void set_viterbi_win_len(const int &win_len);
+    /// Sets the scaling factor used to normalize the reliability value computed by the SOVA
+    void set_sova_scaling_factor(const double &scaling_factor);
+    /// Sets the threshold value used to limit the reliability value computed by SOVA
+    void set_sova_threshold(const double &threshold);
+    /// Sets the Viterbi algorithm scaling factors
+    void set_viterbi_scaling_factors(const double &matching_scaling_factor, ///< scaling factor for matching bits
+    		const double &nonmatching_scaling_factor ///< scaling factor for non matching bits
+    		);
     //channel setup functions
     /// Sets Additive White Gaussian Noise variance for each dimension
     void set_noise(const double &in_sigma2);
@@ -84,18 +94,32 @@ public:
      */
     void set_impulse_response(const itpp::cvec &h);
     /// Sets channel attenuations for demappers (when Space-Time codes are used)
-    /** The input is a complex matrix of dimension \f$MN\times tx\_duration\f$, where \f$M\f$ and \f$N\f$ is the number of emission and reception antennas, respectively and \f$tx\_duration\f$ is the transmission duration expressed in symbol durations.
+    /** The input is a complex matrix of dimension \f$MN\times tx\_duration\f$,
+     * where \f$M\f$ and \f$N\f$ is the number of emission and reception antennas,
+     * respectively and \f$tx\_duration\f$ is the transmission duration expressed
+     * in symbol durations.
      *
      * This input matrix is formed as follows:
-     * - the starting point is an \f$M\times N\f$ complex matrix (channel matrix) with one row represented by the atenuations seen by each of \f$N\f$ reception antennas during one symbol duration, when the signal is emitted by a given emission antenna. The row number represents the number of emission antenna.
-     * - the \f$M\times N\f$ channel matrix is then transformed into a vector of length \f$MN\f$, with the first \f$M\f$ elements the first column of the channel matrix
+     * - the starting point is an \f$M\times N\f$ complex matrix (channel matrix)
+     * with one row represented by the atenuations seen by each of \f$N\f$ reception
+     * antennas during one symbol duration, when the signal is emitted by a given
+     * emission antenna. The row number represents the number of emission antenna.
+     * - the \f$M\times N\f$ channel matrix is then transformed into a vector of
+     * length \f$MN\f$, with the first \f$M\f$ elements the first column of the channel matrix
      * - the vector of length \f$MN\f$ represents one column of the input matrix
-     * - in the input matrix, the vector is repeated \f$\tau_c\f$ times and \f$tx\_duration/\tau_c\f$ different vectors are used. Thus, the channel is supposed constant over \f$\tau_c\f$ symbol durations (channel coherence time) and \f$tx\_duration/\tau_c\f$ different channel realisations are used.
-     * - in our implementation \f$\tau_c\f$ must be and integer multiple of \f$T\f$, where \f$T\f$ is the ST block code duration expressed in symbol durations. This means that the channel matrix must be constant over at least \f$T\f$ symbol durations.
+     * - in the input matrix, the vector is repeated \f$\tau_c\f$ times and
+     * \f$tx\_duration/\tau_c\f$ different vectors are used. Thus, the channel
+     * is supposed constant over \f$\tau_c\f$ symbol durations (channel coherence time)
+     * and \f$tx\_duration/\tau_c\f$ different channel realisations are used.
+     * - in our implementation \f$\tau_c\f$ must be and integer multiple of \f$T\f$,
+     * where \f$T\f$ is the ST block code duration expressed in symbol durations.
+     * This means that the channel matrix must be constant over at least \f$T\f$ symbol durations.
      */
     void set_impulse_response(const itpp::cmat &cH);
     /// Sets scrambler pattern
-    /** The scrambler pattern must be a sequence of \f$\pm1\f$ and is used by the %SISO NSC module in IDMA systems reception. At emission side the bits are first encoded by an NSC code, BPSK modulated and then scrambled with the given pattern.
+    /** The scrambler pattern must be a sequence of \f$\pm1\f$ and is used by
+     * the %SISO NSC module in IDMA systems reception. At emission side the bits
+     * are first encoded by an NSC code, BPSK modulated and then scrambled with the given pattern.
      */
     void set_scrambler_pattern(const itpp::vec &phi);
     void set_scrambler_pattern(const itpp::bvec &phi);
@@ -129,12 +153,14 @@ public:
                           );
     /// Sets demapper method
     /** Possible input values are:
-     * - Hassibi_MAP (maxlogMAP algorithm applied for ST block codes represented using Hassibi's model)
+     * - Hassibi_MAP (maxlogMAP algorithm applied for ST block codes represented
+     * using Hassibi's model)
      * - GA
      * - sGA (simplified GA)
      * - mmsePIC
      * - zfPIC (simplified mmsePIC)
-     * - Alamouti_MAP (maxlogMAP algorithm applied to Alamouti code using matched-filter reception method)
+     * - Alamouti_MAP (maxlogMAP algorithm applied to Alamouti code using matched-filter
+     * reception method)
      */
     void set_demapper_method(const std::string &method);
     /// %SISO decoder for RSC codes
@@ -164,14 +190,16 @@ public:
              const bool &tail ///< if true the trellis is terminated
             );
     /// %SISO equalizer
-    /** Channel trellis is generated so that BPSK mapping is assumed: 0->+1 and 1->-1 (xor truth table is preserved)
+    /** Channel trellis is generated so that BPSK mapping is assumed: 0->+1 and 1->-1
+     * (xor truth table is preserved)
      */
     void equalizer(itpp::vec &extrinsic_data, ///< extrinsic informations of input symbols
                    const itpp::vec &rec_sig, ///< received signal
                    const itpp::vec &apriori_data ///< a priori informations of input symbols
                   );
     /// %SISO equalizer (tail is set through input)
-    /** Channel trellis is generated so that BPSK mapping is assumed: 0->+1 and 1->-1 (xor truth table is preserved)
+    /** Channel trellis is generated so that BPSK mapping is assumed: 0->+1 and 1->-1
+     * (xor truth table is preserved)
      */
     void equalizer(itpp::vec &extrinsic_data, ///< extrinsic informations of input symbols
                    const itpp::vec &rec_sig, ///< received signal
@@ -201,49 +229,74 @@ public:
                  );
 private:
     /// SISO::rsc using logMAP algorithm
-    void rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
+    void rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+    		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
     /// SISO::rsc using maxlogMAP algorithm
-    void rsc_maxlogMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
+    void rsc_maxlogMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+    		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
     /// SISO::rsc using %SOVA
     void rsc_sova(itpp::vec &extrinsic_data, ///< extrinsic information of data bits
     		 const itpp::vec &intrinsic_coded, ///< intrinsic information of coded bits
     		 const itpp::vec &apriori_data, ///< a priori information of data bits
     		 const int &win_len ///< window length used to represent the trellis
     		);
+    /// SISO::rsc using Viterbi algorithm
+    void rsc_viterbi(itpp::vec &extrinsic_data, ///< extrinsic information of data bits
+        		 const itpp::vec &intrinsic_coded, ///< intrinsic information of coded bits
+        		 const itpp::vec &apriori_data, ///< a priori information of data bits
+        		 const int &win_len ///< window length used to represent the trellis
+        		);
     /// SISO::nsc using logMAP algorithm
-    void nsc_logMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
+    void nsc_logMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data,
+    		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
     /// SISO::nsc using maxlogMAP algorithm
-    void nsc_maxlogMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
+    void nsc_maxlogMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data,
+    		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
     /// SISO::equalizer using logMAP algorithm
-    void equalizer_logMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_sig, const itpp::vec &apriori_data);
+    void equalizer_logMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::equalizer using maxlogMAP algorithm
-    void equalizer_maxlogMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_sig, const itpp::vec &apriori_data);
+    void equalizer_maxlogMAP(itpp::vec &extrinsic_data, const itpp::vec &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::mud using maxlogMAP algorithm
-    void mud_maxlogMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, const itpp::mat &apriori_data);
+    void mud_maxlogMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig,
+    		const itpp::mat &apriori_data);
     /// SISO::mud using maxlogMAP algorithm based on T-BCJR
-    void mud_maxlogTMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, const itpp::mat &apriori_data, const double &threshold=-5);
+    void mud_maxlogTMAP(itpp::mat &extrinsic_data, const itpp::vec &rec_sig,
+    		const itpp::mat &apriori_data, const double &threshold=-5);
     /// SISO::mud using Gaussian Chip Detector (GCD)
-    void GCD(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, const itpp::mat &apriori_data);
+    void GCD(itpp::mat &extrinsic_data, const itpp::vec &rec_sig,
+    		const itpp::mat &apriori_data);
     /// SISO::mud using simplified Gaussian Chip Detector (sGCD)
-    void sGCD(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, const itpp::mat &apriori_data);
+    void sGCD(itpp::mat &extrinsic_data, const itpp::vec &rec_sig,
+    		const itpp::mat &apriori_data);
     /// SISO::demapper using maxlogMAP algorithm for ST block codes described using Hassibi's model
-    void Hassibi_maxlogMAP(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig, const itpp::vec &apriori_data);
+    void Hassibi_maxlogMAP(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::demapper using Gaussian Approximation (GA) algorithm
-    void GA(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig, const itpp::vec &apriori_data);
+    void GA(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::demapper using simplified Gaussian Approximation (sGA) algorithm
-    void sGA(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig, const itpp::vec &apriori_data);
+    void sGA(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::demapper using MMSE Parallel Interference Canceller (PIC)
-    void mmsePIC(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig, const itpp::vec &apriori_data);
+    void mmsePIC(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::demapper using ZF Parallel Interference Canceller (PIC)
-    void zfPIC(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig, const itpp::vec &apriori_data);
+    void zfPIC(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::demapper using maxlogMAP algorithm and matched filter receiver for Alamouti ST code
-    void Alamouti_maxlogMAP(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig, const itpp::vec &apriori_data);
+    void Alamouti_maxlogMAP(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::demapper using logMAP algorithm for complex modulators
-    void demodulator_logMAP(itpp::vec &extrinsic_data, const itpp::cvec &rec_sig, const itpp::vec &apriori_data);
+    void demodulator_logMAP(itpp::vec &extrinsic_data, const itpp::cvec &rec_sig,
+    		const itpp::vec &apriori_data);
     /// SISO::demapper using maxlogMAP algorithm for complex modulators
-    void demodulator_maxlogMAP(itpp::vec &extrinsic_data, const itpp::cvec &rec_sig, const itpp::vec &apriori_data);
+    void demodulator_maxlogMAP(itpp::vec &extrinsic_data, const itpp::cvec &rec_sig,
+    		const itpp::vec &apriori_data);
     /// Prints an error message to standard output
-    /** If the %SISO class is used in a mex file, this function ensures that the proper function is used for displaying the error message
+    /** If the %SISO class is used in a mex file, this function ensures that
+     * the proper function is used for displaying the error message
      */
     void print_err_msg(const std::string &msg) const;
 
@@ -256,9 +309,15 @@ private:
     itpp::bvec prec_gen;
     /// True if trellis of CC is terminated
     bool tail;
-    // SOVA variable
-    /// SOVA trellis window length
-    int SOVA_win_len;
+    // SOVA & Viterbi variables
+    /// Viterbi trellis window length
+    int Viterbi_win_len;
+    /// SOVA scaling factor used to multiply the reliabiliy information
+    double SOVA_scaling_factor;
+    /// SOVA threshold used to limit the reliability information
+    double SOVA_threshold;
+    /// Viterbi scaling factors
+    double Viterbi_scaling_factor[2];
     //channel variables
     /// AWGN noise variance
     double sigma2;
@@ -336,7 +395,8 @@ private:
         int* input;///< input
     } nsctrellis;
     /// Finds half constellations
-    void find_half_const(int &select_half, itpp::vec &re_part, itpp::bmat &re_bin_part, itpp::vec &im_part, itpp::bmat &im_bin_part);
+    void find_half_const(int &select_half, itpp::vec &re_part,
+    		itpp::bmat &re_bin_part, itpp::vec &im_part, itpp::bmat &im_bin_part);
     /// Finds equivalent received signal with real coefficients
     void EquivRecSig(itpp::vec &x_eq, const itpp::cmat &rec_sig);
     /// Finds equivalent channel with real coefficients
@@ -351,7 +411,11 @@ inline SISO::SISO()
     scrambler_pattern = "0";//corresponds to +1 using BPSK mapping
     prec_gen = "1";
     demapper_method = "GA";
-    SOVA_win_len = 20;//should be set according to the generator polynomials
+    Viterbi_win_len = 20;//should be set according to the generator polynomials
+    SOVA_scaling_factor = 0.8;//set according to Wang [2003]
+    SOVA_threshold = 10;//according to Wang [2003] an adaptive value should be used
+    Viterbi_scaling_factor[0] = 1.4;//according to Kerner [2009]
+    Viterbi_scaling_factor[1] = 0.4;
 }
 
 inline void SISO::set_map_metric(const std::string &in_MAP_metric)
@@ -364,7 +428,8 @@ inline void SISO::set_precoder_generator(const itpp::bvec &in_prec_gen)//set pre
     prec_gen = in_prec_gen;
 }
 
-inline void SISO::set_precoder_generator(const int &in_prec_gen, const int &constraint_length)//set precoder polynomial
+inline void SISO::set_precoder_generator(const int &in_prec_gen,
+		const int &constraint_length)//set precoder polynomial
 {
     prec_gen = itpp::dec2bin(constraint_length, in_prec_gen);
 }
@@ -374,7 +439,8 @@ inline void SISO::set_generators(const itpp::bmat &in_gen)
     gen = in_gen;
 }
 
-inline void SISO::set_generators(const itpp::ivec &in_gen, const int &constraint_length)
+inline void SISO::set_generators(const itpp::ivec &in_gen,
+		const int &constraint_length)
 {
 	int nb_outputs = in_gen.length();
 	gen.set_size(nb_outputs, constraint_length);
@@ -387,9 +453,26 @@ inline void SISO::set_tail(const bool &in_tail)
     tail = in_tail;
 }
 
-inline void SISO::set_sova_win_len(const int &win_len)
+inline void SISO::set_viterbi_win_len(const int &win_len)
 {
-	SOVA_win_len = win_len;
+	Viterbi_win_len = win_len;
+}
+
+inline void SISO::set_sova_scaling_factor(const double &scaling_factor)
+{
+	SOVA_scaling_factor = scaling_factor;
+}
+
+inline void SISO::set_sova_threshold(const double &threshold)
+{
+	SOVA_threshold = threshold;
+}
+
+inline void SISO::set_viterbi_scaling_factors(const double &matching_scaling_factor,
+		const double &nonmatching_scaling_factor)
+{
+	Viterbi_scaling_factor[0] = matching_scaling_factor;
+	Viterbi_scaling_factor[1] = nonmatching_scaling_factor;
 }
 
 inline void SISO::set_noise(const double &in_sigma2)
@@ -439,14 +522,16 @@ inline void SISO::set_mud_method(const std::string &method)
     MUD_method = method;
 }
 
-inline void SISO::set_constellation(const int &in_nb_bits_symb, const itpp::cvec &in_constellation, const itpp::bmat &in_bin_constellation)
+inline void SISO::set_constellation(const int &in_nb_bits_symb,
+		const itpp::cvec &in_constellation, const itpp::bmat &in_bin_constellation)
 {
     nb_bits_symb = in_nb_bits_symb;
     constellation = in_constellation;
     bin_constellation = in_bin_constellation;
 }
 
-inline void SISO::set_constellation(const int &in_nb_bits_symb, const itpp::cvec &in_constellation, const itpp::ivec &in_int_constellation)
+inline void SISO::set_constellation(const int &in_nb_bits_symb,
+		const itpp::cvec &in_constellation, const itpp::ivec &in_int_constellation)
 {
     nb_bits_symb = in_nb_bits_symb;
     int nb_symb = in_constellation.length();
@@ -459,7 +544,8 @@ inline void SISO::set_constellation(const int &in_nb_bits_symb, const itpp::cvec
     }
 }
 
-inline void SISO::set_st_block_code(const int &Q, const itpp::cmat &A, const itpp::cmat &B, const int &N)
+inline void SISO::set_st_block_code(const int &Q, const itpp::cmat &A,
+		const itpp::cmat &B, const int &N)
 {
     symbols_block = Q;
     nb_em_ant = A.cols();
@@ -474,13 +560,15 @@ inline void SISO::set_demapper_method(const std::string &method)
     demapper_method = method;
 }
 
-inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data, const bool &tail)
+inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data, const bool &tail)
 {
     set_tail(tail);
     rsc(extrinsic_parity, extrinsic_data, intrinsic_coded, apriori_data);
 }
 
-inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
+inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
 {
 	if (gen.size()==0)
 	{
@@ -497,20 +585,25 @@ inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data, co
 	} else if (MAP_metric=="SOVA")
 	{
 		//no extrinsic information for parity bits is provided
-		rsc_sova(extrinsic_data, intrinsic_coded, apriori_data, SOVA_win_len);
+		rsc_sova(extrinsic_data, intrinsic_coded, apriori_data, Viterbi_win_len);
+	} else if (MAP_metric=="Viterbi")
+	{
+		rsc_viterbi(extrinsic_data, intrinsic_coded, apriori_data, Viterbi_win_len);
 	} else
 	{
 		print_err_msg("SISO::rsc: unknown MAP metric. The MAP metric should be either logMAP or maxlogMAP or SOVA");
 	}
 }
 
-inline void SISO::nsc(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data, const bool &tail)
+inline void SISO::nsc(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data,
+		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data, const bool &tail)
 {
   	set_tail(tail);
    	nsc(extrinsic_coded, extrinsic_data, intrinsic_coded, apriori_data);
 }
 
-inline void SISO::nsc(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data, const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
+inline void SISO::nsc(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data,
+		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
 {
 	if (gen.size()==0)
 	{
@@ -536,7 +629,8 @@ inline void SISO::equalizer(itpp::vec &extrinsic_data, ///< extrinsic informatio
 	equalizer(extrinsic_data, rec_sig, apriori_data);
 }
 
-inline void SISO::equalizer(itpp::vec &extrinsic_data, const itpp::vec &rec_sig, const itpp::vec &apriori_data)
+inline void SISO::equalizer(itpp::vec &extrinsic_data, const itpp::vec &rec_sig,
+		const itpp::vec &apriori_data)
 {
 	if (impulse_response.size()==0)
 	{
@@ -557,7 +651,8 @@ inline void SISO::equalizer(itpp::vec &extrinsic_data, const itpp::vec &rec_sig,
 		print_err_msg("SISO::equalizer: unknown MAP metric. The MAP metric should be either logMAP or maxlogMAP");
 }
 
-inline void SISO::mud(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, const itpp::mat &apriori_data)
+inline void SISO::mud(itpp::mat &extrinsic_data, const itpp::vec &rec_sig,
+		const itpp::mat &apriori_data)
 {
 	if (impulse_response.size()==0)
 	{
@@ -582,7 +677,8 @@ inline void SISO::mud(itpp::mat &extrinsic_data, const itpp::vec &rec_sig, const
 		print_err_msg("SISO::mud: unknown MUD method. The MUD method should be either maxlogMAP, GCD or sGCD");
 }
 
-inline void SISO::demapper(itpp::vec &extrinsic_data, const itpp::cvec &rec_sig, const itpp::vec &apriori_data)
+inline void SISO::demapper(itpp::vec &extrinsic_data, const itpp::cvec &rec_sig,
+		const itpp::vec &apriori_data)
 {
 	if (c_impulse_response.size()==0)
 	{
@@ -602,7 +698,8 @@ inline void SISO::demapper(itpp::vec &extrinsic_data, const itpp::cvec &rec_sig,
 		print_err_msg("SISO::demapper: unknown MAP metric. The MAP metric should be either logMAP or maxlogMAP");
 }
 
-inline void SISO::demapper(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig, const itpp::vec &apriori_data)
+inline void SISO::demapper(itpp::vec &extrinsic_data, const itpp::cmat &rec_sig,
+		const itpp::vec &apriori_data)
 {
 	if (c_impulse_response.size()==0)
 	{
