@@ -64,10 +64,12 @@ At the last iteration of the turbo reception algorithm, data bits can be recover
 *SISO RSC module*
 
 Decodes RSC codes of coding rate [http://turbosiso.googlecode.com/svn/wiki/form_14.png]. The following algorithms are implemented:
-* log MAP [2]
+
+* log MAP `[2]`
 * max log MAP
 * Soft Output Viterbi Algorithm (SOVA)
 * Viterbi-based soft output algorithm
+
 The trellis describing the RSC code must begin in zero state. The trellis can end in zero state (tail bits must be added to input data bits of the RSC code) or in an unknown state (no tail bits needed).
 
 When the BPSK modulated received symbols, [http://turbosiso.googlecode.com/svn/wiki/form_2.png], are fed to the SISO RSC module input, the intrinsic information of data and parity bits has the expression:
