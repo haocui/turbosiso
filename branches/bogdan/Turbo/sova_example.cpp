@@ -18,7 +18,7 @@ int main(void)
 	//Parameters
 	ivec gen = "013 015";//octal form
 	int constraint_length = 4;
-	double EbN0_dB = 1.0;
+	double EbN0_dB = 10.0;
 	double R = 1.0/2.0;
 	double Ec = 1;
 	int len = 1e4;
@@ -27,7 +27,8 @@ int main(void)
 	SISO siso;
 	siso.set_generators( gen, constraint_length );
 	siso.set_viterbi_win_len( 5*constraint_length );
-	siso.set_map_metric("Viterbi");
+	siso.set_map_metric("SOVA");
+	//siso.set_viterbi_hard_output_flag(true);
 
 	//Bits generation & Encoding
     Rec_Syst_Conv_Code cc;
@@ -63,6 +64,6 @@ int main(void)
 	BERC berc;
 	berc.clear();
 	berc.count( bits, bpsk.demodulate_bits( -extrinsic_data ) );
-	//berc.count( bits, to_bvec(extrinsic_data) );
+	//berc.count( bits, to_bvec ( extrinsic_data ) );
 	cout << "BER = " << berc.get_errorrate() << endl;
 }
