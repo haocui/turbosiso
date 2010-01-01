@@ -85,7 +85,7 @@ int main(void)
     SISO siso;
     siso.set_generators(gen, constraint_length);
     siso.set_map_metric(map_metric);
-    siso.set_sova_win_len(5*constraint_length);//SOVA only
+    siso.set_viterbi_win_len(5*constraint_length);//SOVA only
     //siso.set_sova_scaling_factor(1.0);//these are parameters for original SOVA
     //siso.set_sova_threshold(INFINITY);
 

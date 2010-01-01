@@ -20,15 +20,17 @@ int main(void)
 {
     //general parameters
     //double threshold_value = 100;
+	double matching_scaling_factor = 4;
+	double nonmatching_scaling_factor = 6.5;
     string map_metric_first="logMAP";
     string map_metric_second="Viterbi";
     ivec gen = "013 015";//octal form, feedback first
     int constraint_length = 4;
     int nb_errors_lim = 3000;
     int nb_bits_lim = int(1e6);
-    int perm_len = 3196;//total number of bits in a block (with tail)
+    int perm_len = (1<<14);//total number of bits in a block (with tail)
     int nb_iter = 10;//number of iterations in the turbo decoder
-    vec EbN0_dB = "5";//"0:0.1:5";
+    vec EbN0_dB = "0:0.1:5";
     double R = 1.0/3.0;//coding rate (non punctured PCCC)
     double Ec = 1.0;//coded bit energy
 
@@ -76,8 +78,9 @@ int main(void)
     SISO siso;
     siso.set_generators(gen, constraint_length);
     siso.set_viterbi_win_len(5*constraint_length);//Viterbi & SOVA
-    siso.set_sova_scaling_factor(1);//SOVA only
-    siso.set_sova_threshold(INFINITY);
+    //siso.set_sova_scaling_factor(1);//SOVA only
+    //siso.set_sova_threshold(INFINITY);
+    siso.set_viterbi_scaling_factors(matching_scaling_factor, nonmatching_scaling_factor);
 
     //BER
     BERC berc;
@@ -178,8 +181,11 @@ int main(void)
     ff << Name("perm_len") << perm_len;
     ff << Name("nb_errors_lim") << nb_errors_lim;
     ff << Name("nb_bits_lim") << nb_bits_lim;
+    ff << Name("matching_scaling_factor") << matching_scaling_factor;
+    ff << Name("nonmatching_scaling_factor") << nonmatching_scaling_factor;
     ff.close();
 #else
+    cout << EbN0_dB << endl;
     //show BER
     cout << ber << endl;
 #endif

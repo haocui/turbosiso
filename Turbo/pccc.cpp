@@ -8,7 +8,7 @@
  * to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
  */
 
-#define TO_FILE
+//#define TO_FILE
 
 #include "itpp/itcomm.h"
 #include "SISO.h"
@@ -25,12 +25,12 @@ int main(void)
 {
     //general parameters
     //double threshold_value = 100;
-    string map_metric="SOVA";
+    string map_metric="Viterbi";
     ivec gen = "013 015";//octal form, feedback first
     int constraint_length = 4;
     int nb_errors_lim = 3000;
     int nb_bits_lim = int(1e6);
-    int perm_len = 3196;//total number of bits in a block (with tail)
+    int perm_len = (1<<14);//total number of bits in a block (with tail)
     int nb_iter = 10;//number of iterations in the turbo decoder
     vec EbN0_dB = "0:0.1:5";
     double R = 1.0/3.0;//coding rate (non punctured PCCC)
@@ -80,8 +80,8 @@ int main(void)
     siso.set_generators(gen, constraint_length);
     siso.set_map_metric(map_metric);
     siso.set_viterbi_win_len(5*constraint_length);//Viterbi & SOVA
-    siso.set_sova_scaling_factor(1);//SOVA only
-    siso.set_sova_threshold(INFINITY);
+    //siso.set_sova_scaling_factor(1);//SOVA only
+    //siso.set_sova_threshold(INFINITY);
 
     //BER
     BERC berc;
@@ -183,6 +183,7 @@ int main(void)
     ff << Name("nb_bits_lim") << nb_bits_lim;
     ff.close();
 #else
+    cout << EbN0_dB << endl;
     //show BER
     cout << ber << endl;
 #endif

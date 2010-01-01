@@ -55,7 +55,7 @@ int main(void)
     //SISO RSC
     vec rsc_intrinsic_coded(rec_len);
     vec rsc_apriori_data(perm_len);
-    vec rsc_extrinsic_parity;
+    vec rsc_extrinsic_coded;
     vec rsc_extrinsic_data;
     //SISO NSC
     vec nsc_intrinsic_coded(perm_len);
@@ -136,7 +136,7 @@ int main(void)
             for (n=0;n<nb_iter;n++)
             {
                 //first decoder
-                siso.rsc(rsc_extrinsic_parity, rsc_extrinsic_data, rsc_intrinsic_coded, rsc_apriori_data, false);                
+                siso.rsc(rsc_extrinsic_coded, rsc_extrinsic_data, rsc_intrinsic_coded, rsc_apriori_data, false);                
                 
                 //deinterleave+threshold
                 nsc_intrinsic_coded = threshold(rsc_extrinsic_data(inv_perm), threshold_value);

@@ -2,7 +2,8 @@
 
 #test program name
 TESTS			=		pccc sccc equalizer IDMA BICM STBICM EXIT_pccc\
-						sova_example pccc_punctured pccc_hybrid
+						sova_example pccc_punctured pccc_hybrid\
+						TC_RSC
 
 #SISO class path
 VPATH			=		/home/bogdan/C++/SISO
