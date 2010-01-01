@@ -536,26 +536,31 @@ WARN_LOGFILE           =
 
 INPUT                  = mainpage.txt \
                          tutorials.txt \
-                         SISO.cpp \
+                         SISO.h \
+                         SISO_dem.cpp \
+                         SISO_eq.cpp \
+                         SISO_mud.cpp \
+                         SISO_nsc.cpp \
+                         SISO_rsc.cpp \
                          EXIT.cpp \
                          STC.cpp \
                          ../Turbo/pccc.cpp \
-                         ../Turbo/pccc.m \
+                         ../../Matlab/Turbo/pccc.m \
                          ../Turbo/sccc.cpp \
                          ../Turbo/equalizer.cpp \
                          ../Turbo/IDMA.cpp \
                          ../Turbo/BICM.cpp \
-                         ../Turbo/BICM.m \
+                         ../../Matlab/Turbo/BICM.m \
                          ../Turbo/STBICM.cpp \
                          ../Turbo/EXIT_pccc.cpp \
                          ../Turbo/TC_mud.cpp \
                          ../Turbo/TC_descrambler.cpp \
-                         ../Turbo/C_SISOrsc.cpp \
-                         ../Turbo/C_SISOnsc.cpp \
-                         ../Turbo/C_SISOdescrambler.cpp \
-                         ../Turbo/C_SISOequalizer.cpp \
-                         ../Turbo/C_SISOmud.cpp \
-                         ../Turbo/C_SISOdemapper.cpp
+                         ../../Matlab/mexFiles/C_SISOrsc.cpp \
+                         ../../Matlab/mexFiles/C_SISOnsc.cpp \
+                         ../../Matlab/mexFiles/C_SISOdescrambler.cpp \
+                         ../../Matlab/mexFiles/C_SISOequalizer.cpp \
+                         ../../Matlab/mexFiles/C_SISOmud.cpp \
+                         ../../Matlab/mexFiles/C_SISOdemapper.cpp
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
