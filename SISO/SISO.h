@@ -46,6 +46,7 @@ public:
      * - logMAP
      * - maxlogMAP
      * - SOVA
+     * - Viterbi
      * Soft Output Viterbi Algorithm (SOVA) is equivalent to the MAP algorithm
      * only when the a priori information is zero.
      */
@@ -78,6 +79,8 @@ public:
     void set_viterbi_scaling_factors(const double &matching_scaling_factor, ///< scaling factor for matching bits
     		const double &nonmatching_scaling_factor ///< scaling factor for non matching bits
     		);
+    /// Sets the Viterbi algorithm hard output flag (true when only the hard output is needed)
+    void set_viterbi_hard_output_flag(const bool &flag);
     //channel setup functions
     /// Sets Additive White Gaussian Noise variance for each dimension
     void set_noise(const double &in_sigma2);
@@ -164,13 +167,13 @@ public:
      */
     void set_demapper_method(const std::string &method);
     /// %SISO decoder for RSC codes
-    void rsc(itpp::vec &extrinsic_parity, ///< extrinsic information of parity bits
+    void rsc(itpp::vec &extrinsic_coded, ///< extrinsic information of parity bits
              itpp::vec &extrinsic_data, ///< extrinsic information of data bits
              const itpp::vec &intrinsic_coded, ///< intrinsic information of coded bits
              const itpp::vec &apriori_data ///< a priori information of data bits
             );
     /// %SISO decoder for RSC codes (tail is set through input)
-    void rsc(itpp::vec &extrinsic_parity, ///< extrinsic information of parity bits
+    void rsc(itpp::vec &extrinsic_coded, ///< extrinsic information of parity bits
              itpp::vec &extrinsic_data, ///< extrinsic information of data bits
              const itpp::vec &intrinsic_coded, ///< intrinsic information of coded bits
              const itpp::vec &apriori_data, ///< a priori information of data bits
@@ -229,10 +232,10 @@ public:
                  );
 private:
     /// SISO::rsc using logMAP algorithm
-    void rsc_logMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+    void rsc_logMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data,
     		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
     /// SISO::rsc using maxlogMAP algorithm
-    void rsc_maxlogMAP(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+    void rsc_maxlogMAP(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data,
     		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data);
     /// SISO::rsc using %SOVA
     void rsc_sova(itpp::vec &extrinsic_data, ///< extrinsic information of data bits
@@ -241,7 +244,8 @@ private:
     		 const int &win_len ///< window length used to represent the trellis
     		);
     /// SISO::rsc using Viterbi algorithm
-    void rsc_viterbi(itpp::vec &extrinsic_data, ///< extrinsic information of data bits
+    void rsc_viterbi(itpp::vec &extrinsic_coded, ///< extrinsic information of coded bits
+				 itpp::vec &extrinsic_data, ///< extrinsic information of data bits
         		 const itpp::vec &intrinsic_coded, ///< intrinsic information of coded bits
         		 const itpp::vec &apriori_data, ///< a priori information of data bits
         		 const int &win_len ///< window length used to represent the trellis
@@ -318,6 +322,8 @@ private:
     double SOVA_threshold;
     /// Viterbi scaling factors
     double Viterbi_scaling_factor[2];
+    /// Viterbi hard output flag (true when only hard output is needed)
+    bool Viterbi_hard_output_flag;
     //channel variables
     /// AWGN noise variance
     double sigma2;
@@ -416,6 +422,7 @@ inline SISO::SISO()
     SOVA_threshold = 10;//according to Wang [2003] an adaptive value should be used
     Viterbi_scaling_factor[0] = 1.4;//according to Kerner [2009]
     Viterbi_scaling_factor[1] = 0.4;
+    Viterbi_hard_output_flag = false;
 }
 
 inline void SISO::set_map_metric(const std::string &in_MAP_metric)
@@ -473,6 +480,11 @@ inline void SISO::set_viterbi_scaling_factors(const double &matching_scaling_fac
 {
 	Viterbi_scaling_factor[0] = matching_scaling_factor;
 	Viterbi_scaling_factor[1] = nonmatching_scaling_factor;
+}
+
+inline void SISO::set_viterbi_hard_output_flag(const bool &flag)
+{
+	Viterbi_hard_output_flag = flag;
 }
 
 inline void SISO::set_noise(const double &in_sigma2)
@@ -560,14 +572,14 @@ inline void SISO::set_demapper_method(const std::string &method)
     demapper_method = method;
 }
 
-inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+inline void SISO::rsc(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data,
 		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data, const bool &tail)
 {
     set_tail(tail);
-    rsc(extrinsic_parity, extrinsic_data, intrinsic_coded, apriori_data);
+    rsc(extrinsic_coded, extrinsic_data, intrinsic_coded, apriori_data);
 }
 
-inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
+inline void SISO::rsc(itpp::vec &extrinsic_coded, itpp::vec &extrinsic_data,
 		const itpp::vec &intrinsic_coded, const itpp::vec &apriori_data)
 {
 	if (gen.size()==0)
@@ -578,20 +590,20 @@ inline void SISO::rsc(itpp::vec &extrinsic_parity, itpp::vec &extrinsic_data,
 
 	if (MAP_metric=="logMAP")
 	{
-		rsc_logMAP(extrinsic_parity, extrinsic_data, intrinsic_coded, apriori_data);
+		rsc_logMAP(extrinsic_coded, extrinsic_data, intrinsic_coded, apriori_data);
 	} else if (MAP_metric=="maxlogMAP")
 	{
-		rsc_maxlogMAP(extrinsic_parity, extrinsic_data, intrinsic_coded, apriori_data);
+		rsc_maxlogMAP(extrinsic_coded, extrinsic_data, intrinsic_coded, apriori_data);
 	} else if (MAP_metric=="SOVA")
 	{
-		//no extrinsic information for parity bits is provided
+		//no extrinsic information for coded bits is provided
 		rsc_sova(extrinsic_data, intrinsic_coded, apriori_data, Viterbi_win_len);
 	} else if (MAP_metric=="Viterbi")
 	{
-		rsc_viterbi(extrinsic_data, intrinsic_coded, apriori_data, Viterbi_win_len);
+		rsc_viterbi(extrinsic_coded, extrinsic_data, intrinsic_coded, apriori_data, Viterbi_win_len);
 	} else
 	{
-		print_err_msg("SISO::rsc: unknown MAP metric. The MAP metric should be either logMAP or maxlogMAP or SOVA");
+		print_err_msg("SISO::rsc: unknown MAP metric. The MAP metric should be either logMAP or maxlogMAP or SOVA or Viterbi");
 	}
 }
 
