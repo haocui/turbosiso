@@ -1,9 +1,10 @@
 /** \mainpage Soft Input Soft Output modules for turbo reception
  * \author Bogdan Cristea
- * \version 1.1
+ * \version 2.0
  *
  * \section descr Description
- * C++ class implementing Soft Input Soft Output (SISO) modules for turbo reception using <a href="http://localhost/itpp/index.html"> IT++ library</a>. 
+ * C++ class implementing Soft Input Soft Output (SISO) modules for turbo reception 
+ * using <a href="http://sourceforge.net/apps/wordpress/itpp/"> IT++ library</a>. 
  *
  * Within the \link tr::SISO SISO class\endlink, the following SISO modules are implemented:
  *- \ref SISO_RSC "decoder for Recursive Systematic Convolutional (RSC) codes"
@@ -60,13 +61,23 @@
  *
  * \image html SISO_RSC.jpg "SISO RSC module"
  *
- * Decodes RSC codes of coding rate \f$1/2\f$. An adaptation of the MAP algorithm for RSC codes is used \ref pietrobon94simplification "[2]". Both versions, log MAP and max log MAP are implemented.
- * The trellis describing the RSC code must begin in zero state. The trellis can end in zero state (tail bits must be added to input data bits of the RSC code) 
+ * Decodes RSC codes of coding rate \f$1/2\f$. The following algorithms are
+ * implemented:
+ * - log MAP \ref pietrobon94simplification "[2]"
+ * - max log MAP
+ * - Soft Output Viterbi Algorithm (SOVA) \ref hagenauer89viterbi "[12]"
+ * - Viterbi-based soft output algorithm \ref kerner09iterative "[13]"
+ *
+ * The trellis describing the RSC code must begin in zero state. The trellis can 
+ * end in zero state (tail bits must be added to input data bits of the RSC code) 
  * or in an unknown state (no tail bits needed).
  *
- * When the BPSK modulated received symbols, \f$y(n)\f$, are fed to the SISO RSC module input, the intrinsic information of data and parity bits has
- * the expression: \f[L(v(n);I) = -\frac{2}{\sigma^2}y(n)\f], where \f$\sigma^2\f$ is the variance of the Additive White Gaussian Noise (AWGN).
- * The sign minus in the above expression comes from the way the BPSK mapping is done: \f$0\rightarrow +1\f$ and \f$1\rightarrow -1\f$.
+ * When the BPSK modulated received symbols, \f$y(n)\f$, are fed to the SISO RSC 
+ * module input, the intrinsic information of data and parity bits has
+ * the expression: \f[L(v(n);I) = -\frac{2}{\sigma^2}y(n)\f], where \f$\sigma^2\f$ 
+ * is the variance of the Additive White Gaussian Noise (AWGN).
+ * The sign minus in the above expression comes from the way the BPSK mapping is 
+ * done: \f$0\rightarrow +1\f$ and \f$1\rightarrow -1\f$.
  * 
  * For an usage example see \ref pccc "Parallel Concatenated Convolutional Codes".
  *
@@ -117,9 +128,9 @@
  * The multipath channels from all users are seen as a code with multiple inputs and single output (MISO).
  * The channel inputs are BPSK modulated symbols (\f$0\rightarrow +1\f$ and \f$1\rightarrow -1\f$) and the channel coefficients are real numbers.
  *
- * The following algorithms are implemented \ref mahadevappa02mitigating "[5]", \ref liu04iterative "[6]":
- * - max log MAP algorithm
- * - Gaussian Chip Detector (GCD)
+ * The following algorithms are implemented:
+ * - max log MAP algorithm \ref mahadevappa02mitigating "[5]"
+ * - Gaussian Chip Detector (GCD) \ref liu04iterative "[6]"
  * - simplified GCD
  *
  * When the max log MAP algorithm is used, the channel trellis must begin in zero state (that is the channel cases of each users must be filled with \f$+1\f$) 
@@ -145,7 +156,7 @@
  * - max log MAP algorithm
  *
  * and in the SISO demapper for ST-BICM the following algorithms are implemented \ref cristea08turbo "[9]":
- * - max log MAP algorithm adapted for ST block codes
+ * - log MAP and max log MAP algorithm adapted for ST block codes
  * - max log MAP algorithm adapted for Alamouti code (much lower complexity than the max log MAP algorithm for ST block codes)
  * - Gaussian Approximation (GA)
  * - simplified GA
@@ -190,4 +201,11 @@ Conference, vol. 1, pp. 473-478 vol.1, 2000
  *
  * \anchor brink01convergence [11] S. ten Brink, ''Convergence behavior of iteratively decoded parallel concatenated codes,`` IEEE 
  * Transactions on Communications, vol. 49, pp. 1727-1737, Oct. 2001
+ *
+ * \anchor hagenauer89viterbi [12] J. Hagenauer and P. Hoeher, ''A Viterbi algorithm with soft-decision outputs 
+ * and its applications,`` in Global Telecommunications Conference, 1989
+ *
+ * \anchor kerner09iterative [13] M. Kerner and O. Amrani, ''Iterative Decoding 
+ * Using Optimum Soft Input - Hard Output Module,`` in: IEEE Transactions on 
+ * Communications, vol. 57, no. 7, July 2009, pp. 1881-1885
  */

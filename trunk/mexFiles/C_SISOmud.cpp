@@ -8,7 +8,7 @@
  */
 
 #include "itpp/itmex.h"
-#include "SISO.cpp"
+#include "SISO.h"
 
 using namespace itpp;
 

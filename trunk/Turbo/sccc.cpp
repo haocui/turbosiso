@@ -11,7 +11,8 @@
 #define TO_FILE
 
 #include "itpp/itcomm.h"
-#include "../SISO/SISO.cpp"//SISO class
+#include "SISO.h"//SISO class
+#include "Progress_Timer.h"
 
 using namespace itpp;
 using tr::SISO;
@@ -54,7 +55,7 @@ int main(void)
     //SISO RSC
     vec rsc_intrinsic_coded(rec_len);
     vec rsc_apriori_data(perm_len);
-    vec rsc_extrinsic_parity;
+    vec rsc_extrinsic_coded;
     vec rsc_extrinsic_data;
     //SISO NSC
     vec nsc_intrinsic_coded(perm_len);
@@ -92,7 +93,7 @@ int main(void)
     BERC berc;
 
     //Progress timer
-    Progress_Timer timer;
+    tr::Progress_Timer timer;
     timer.set_max(snr_len);
             
     //Randomize generators
@@ -135,7 +136,7 @@ int main(void)
             for (n=0;n<nb_iter;n++)
             {
                 //first decoder
-                siso.rsc(rsc_extrinsic_parity, rsc_extrinsic_data, rsc_intrinsic_coded, rsc_apriori_data, false);                
+                siso.rsc(rsc_extrinsic_coded, rsc_extrinsic_data, rsc_intrinsic_coded, rsc_apriori_data, false);                
                 
                 //deinterleave+threshold
                 nsc_intrinsic_coded = threshold(rsc_extrinsic_data(inv_perm), threshold_value);
@@ -150,7 +151,7 @@ int main(void)
                 berc.count(bits, rec_bits.left(nb_bits));
                 ber(n,en) += berc.get_errorrate();
 
-                //interleave+threshold
+                //interleave
                 rsc_apriori_data = nsc_extrinsic_coded(perm);
             }//end iterations
             nb_errors += int(berc.get_errors());//get number of errors at the last iteration

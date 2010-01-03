@@ -1,11 +1,9 @@
-# The program name can be overwritten from command line as follows:
-#'make PROGRAM=pccc' or 'make clean PROGRAM=pccc' 
+# Use 'make program_name' for single program compilation 
 
-#program name
-PROGRAM			=		pccc sccc equalizer IDMA BICM STBICM EXIT_pccc TC_descrambler TC_mud
-
-#mex program name
-MEX_PROGRAM		=		C_SISOrsc C_SISOnsc C_SISOequalizer C_SISOmud C_SISOdescrambler C_SISOdemapper
+#test program name
+TESTS			=		pccc sccc equalizer IDMA BICM STBICM EXIT_pccc\
+						sova_example pccc_punctured pccc_hybrid\
+						TC_RSC
 
 #SISO class path
 VPATH			=		../SISO
@@ -13,39 +11,26 @@ VPATH			=		../SISO
 #compiler options
 CXX 			=		gcc
 CXXFLAGS 		= 		`itpp-config --cflags-opt` -I$(VPATH)
-LDFLAGS			=		`itpp-config --libs-opt`
-#DBGFLAGS 		= 		`itpp-config --cflags-debug` -I$(VPATH)
-DBGFLAGS 		= 		-I/usr/local/include -Wall -ggdb -O0 -pipe -I$(VPATH)
-DBGLIBS 		= 		`itpp-config --libs-debug`
-MEX_OPTS		=		-litpp -L/opt/acml4.2.0/gfortran64_mp/lib -lacml_mp -I$(VPATH)
+LDFLAGS			=		`itpp-config --libs-opt` -L$(VPATH) -lsiso
+CXXFLAGS_DEBUG 	= 		-I/usr/local/include -Wall -ggdb -O0 -pipe -I$(VPATH)
+LDFLAGS_DEBUG 	= 		`itpp-config --libs-debug` -L$(VPATH) -lsiso_debug
 
 #additional file names
-PROGRAM_d       =       $(addsuffix _d, ${PROGRAM})
-MEX_PROGRAM.mexa64		=		$(addsuffix .mexa64, ${MEX_PROGRAM})
-MEX_PROGRAM_d.mexa64	=		$(addsuffix _d.mexa64, ${MEX_PROGRAM})
+TESTS.o			= 	 	$(addsuffix .o, $(TESTS))
+TESTS_d			= 	 	$(addsuffix _d, $(TESTS))
 
 #target definition
-.PHONY : all debug mex mex_debug clean
+.PHONY : all clean debug
 
-% : %.cpp
-	$(CXX) $(CXXFLAGS) $< $(LDFLAGS) -o $@
+#multiple program compilation (implicit rules are used)
+all : $(TESTS)
 
-all : $(PROGRAM)
+#debug program compilation
+debug : $(TESTS_d)
 
 %_d : %.cpp
-	$(CXX) $(DBGFLAGS) $< $(DBGLIBS) -o $@
+	$(CXX) $(CXXFLAGS_DEBUG) $< $(LDFLAGS_DEBUG) -o $@
 
-debug : $(PROGRAM_d)
-
-%.mexa64 : %.cpp
-	mex $< $(MEX_OPTS) -output $@ 
-
-mex : $(MEX_PROGRAM.mexa64)
-
-%_d.mexa64 : %.cpp
-	mex -g $< $(MEX_OPTS) -output $@ 
-
-mex_debug : $(MEX_PROGRAM_d.mexa64)
-
+#delete all
 clean :
-	$(RM) $(PROGRAM) $(PROGRAM_d) $(MEX_PROGRAM.mexa64) $(MEX_PROGRAM_d.mexa64)
+	$(RM) *.o $(TESTS) $(TESTS_d)

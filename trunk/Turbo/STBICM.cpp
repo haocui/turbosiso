@@ -10,8 +10,9 @@
 #define TO_FILE
 
 #include "itpp/itcomm.h"
-#include "../SISO/SISO.cpp"//SISO class
-#include "../SISO/STC.cpp" //STC class
+#include "SISO.h"//SISO class
+#include "STC.h" //STC class
+#include "Progress_Timer.h"
 
 using namespace itpp;
 using tr::STC;
@@ -127,7 +128,7 @@ int main(void)
     BERC berc;
 
     //progress timer
-    Progress_Timer timer;
+    tr::Progress_Timer timer;
     timer.set_max(snr_len);
         
     //Randomize generators

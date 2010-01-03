@@ -1,14 +1,9 @@
-/** \file
- *
- * \brief Parallel Concatenated Convolutional Codes (PCCCs) of coding rate 1/3
- *
- * Implements PCCCs using a turbo decoder with two SISO RSC modules.
- *
- * Reference: S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module
- * to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
+/*
+ *  This version uses different algorithms for the two SISO modules implementing
+ * the turbo receiver for PCCC.
  */
 
-//#define TO_FILE
+#define TO_FILE
 
 #include "itpp/itcomm.h"
 #include "SISO.h"
@@ -25,7 +20,10 @@ int main(void)
 {
     //general parameters
     //double threshold_value = 100;
-    string map_metric="Viterbi";
+	double matching_scaling_factor = 4;
+	double nonmatching_scaling_factor = 6.5;
+    string map_metric_first="logMAP";
+    string map_metric_second="Viterbi";
     ivec gen = "013 015";//octal form, feedback first
     int constraint_length = 4;
     int nb_errors_lim = 3000;
@@ -37,7 +35,8 @@ int main(void)
     double Ec = 1.0;//coded bit energy
 
     //other parameters
-    string filename = "Res/pccc_"+to_str(perm_len)+"_orig"+map_metric+".it";
+    string filename = "Res/pccc_hybrid_"+to_str(perm_len)+"_"+
+    		map_metric_first+"_"+map_metric_second+".it";
     int nb_bits = perm_len-(constraint_length-1);//number of bits in a block (without tail)
     vec sigma2 = (0.5*Ec/R)*pow(inv_dB(EbN0_dB), -1.0);//N0/2
     double Lc;//scaling factor
@@ -78,10 +77,10 @@ int main(void)
     //SISO modules
     SISO siso;
     siso.set_generators(gen, constraint_length);
-    siso.set_map_metric(map_metric);
     siso.set_viterbi_win_len(5*constraint_length);//Viterbi & SOVA
     //siso.set_sova_scaling_factor(1);//SOVA only
     //siso.set_sova_threshold(INFINITY);
+    siso.set_viterbi_scaling_factors(matching_scaling_factor, nonmatching_scaling_factor);
 
     //BER
     BERC berc;
@@ -138,13 +137,14 @@ int main(void)
             for (n=0;n<nb_iter;n++)
             {
                 //first decoder
-                //siso.rsc(extrinsic_coded, extrinsic_data, dec1_intrinsic_coded, apriori_data, true);
+            	siso.set_map_metric(map_metric_first);
             	siso.rsc(extrinsic_coded, extrinsic_data, dec1_intrinsic_coded, apriori_data);
                 //interleave
                 apriori_data = extrinsic_data(perm);
                 //threshold
                 //apriori_data = threshold(apriori_data, threshold_value);
                 //second decoder
+                siso.set_map_metric(map_metric_second);
                 siso.rsc(extrinsic_coded, extrinsic_data, dec2_intrinsic_coded, apriori_data);
 
                 //decision
@@ -181,6 +181,8 @@ int main(void)
     ff << Name("perm_len") << perm_len;
     ff << Name("nb_errors_lim") << nb_errors_lim;
     ff << Name("nb_bits_lim") << nb_bits_lim;
+    ff << Name("matching_scaling_factor") << matching_scaling_factor;
+    ff << Name("nonmatching_scaling_factor") << nonmatching_scaling_factor;
     ff.close();
 #else
     cout << EbN0_dB << endl;

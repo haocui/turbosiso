@@ -8,7 +8,7 @@
  */
 
 #include "itpp/itmex.h"
-#include "SISO.cpp"
+#include "SISO.h"
 
 using namespace itpp;
 
@@ -22,7 +22,7 @@ void mexFunction(int n_output, mxArray *output[], int n_input, const mxArray *in
     vec intrinsic_coded = mxArray2vec(input[0]);
     vec apriori_data = mxArray2vec(input[1]);
     bmat bin_gen = mxArray2bmat(input[2]);
-    bool tail = (mxArray2double(input[3])==1);
+    bool tail = (mxArray2double(input[3])==1.0);
     std::string map_metric = mxArray2string(input[4]);
     
     // ------------------ Start of routine ---------------------------
