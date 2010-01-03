@@ -3,7 +3,8 @@
  * \version 2.0
  *
  * \section descr Description
- * C++ class implementing Soft Input Soft Output (SISO) modules for turbo reception using <a href="http://localhost/itpp/index.html"> IT++ library</a>. 
+ * C++ class implementing Soft Input Soft Output (SISO) modules for turbo reception 
+ * using <a href="http://sourceforge.net/apps/wordpress/itpp/"> IT++ library</a>. 
  *
  * Within the \link tr::SISO SISO class\endlink, the following SISO modules are implemented:
  *- \ref SISO_RSC "decoder for Recursive Systematic Convolutional (RSC) codes"

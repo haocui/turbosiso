@@ -1,0 +1,50 @@
+\form#0:\[ L(v(n);I) = \ln \frac{p(y(n)/v(n)=1)}{p(y(n)/v(n)=0)} \]
+\form#1:$p(y(n)/v(n)=1)$
+\form#2:$y(n)$
+\form#3:$v(n)=1$
+\form#4:\[ L(u(k);I) = \ln \frac{P(u(k)=1)}{P(u(k)=0)} \]
+\form#5:$P(u(k)=1)$
+\form#6:$u(k)=1$
+\form#7:$u(k)$
+\form#8:$v(n)$
+\form#9:\[ L(v(n);O) = \Lambda(v(n))-L(v(n);I) \]
+\form#10:$\Lambda(v(n))$
+\form#11:\[ L(u(k);O) = \Lambda(u(k))-L(u(k);I) \]
+\form#12:$\Lambda(u(k))$
+\form#13:\[ \tilde{u}(k) = 1\textrm{ if }\Lambda(u(k))\geq 0 \]
+\form#14:$1/2$
+\form#15:\[L(v(n);I) = -\frac{2}{\sigma^2}y(n)\]
+\form#16:$\sigma^2$
+\form#17:$0\rightarrow +1$
+\form#18:$1\rightarrow -1$
+\form#19:$1/r$
+\form#20:$r$
+\form#21:$1$
+\form#22:$L=1$
+\form#23:$2$
+\form#24:$L=0$
+\form#25:$+1$
+\form#26:$(037\ 021)$
+\form#27:$2^{14}$
+\form#28:$\log(\exp(a)+\exp(b))\approx \max(a,b)$
+\form#29:$\frac{E_b}{N_0}=0.8\ dB$
+\form#30:$4$
+\form#31:$03$
+\form#32:$\pi_m(n)$
+\form#33:$N_s=16$
+\form#34:$N_s=8$
+\form#35:$\frac{E_b}{N_0}=8\ dB$
+\form#36:$16$
+\form#37:$(0133\ 0171)$
+\form#38:$\eta=2 \mbox{ bits/symbol duration}$
+\form#39:$MN\times tx\_duration$
+\form#40:$M$
+\form#41:$N$
+\form#42:$tx\_duration$
+\form#43:$M\times N$
+\form#44:$MN$
+\form#45:$\tau_c$
+\form#46:$tx\_duration/\tau_c$
+\form#47:$T$
+\form#48:$\pm1$
+\form#49:$L$
