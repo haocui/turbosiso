@@ -679,8 +679,6 @@ inline void SISO::mud(itpp::mat &extrinsic_data, const itpp::vec &rec_sig,
 
 	if (MUD_method=="maxlogMAP")
 		mud_maxlogMAP(extrinsic_data, rec_sig, apriori_data);
-	else if (MUD_method=="maxlogTMAP")
-		mud_maxlogTMAP(extrinsic_data, rec_sig, apriori_data);
     else if (MUD_method=="GCD")
         GCD(extrinsic_data, rec_sig, apriori_data);
     else if (MUD_method=="sGCD")

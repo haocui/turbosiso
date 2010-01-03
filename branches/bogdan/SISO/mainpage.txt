@@ -65,7 +65,7 @@
  * - log MAP \ref pietrobon94simplification "[2]"
  * - max log MAP
  * - Soft Output Viterbi Algorithm (SOVA) \ref hagenauer89viterbi "[12]"
- * - Viterbi-based soft output algorithm
+ * - Viterbi-based soft output algorithm \ref kerner09iterative "[13]"
  *
  * The trellis describing the RSC code must begin in zero state. The trellis can 
  * end in zero state (tail bits must be added to input data bits of the RSC code) 
@@ -129,7 +129,6 @@
  *
  * The following algorithms are implemented:
  * - max log MAP algorithm \ref mahadevappa02mitigating "[5]"
- * - max log T-MAP algorithm \ref franz98concatenated "[13]"
  * - Gaussian Chip Detector (GCD) \ref liu04iterative "[6]"
  * - simplified GCD
  *
@@ -205,7 +204,7 @@ Conference, vol. 1, pp. 473-478 vol.1, 2000
  * \anchor hagenauer89viterbi [12] J. Hagenauer and P. Hoeher, ''A Viterbi algorithm with soft-decision outputs 
  * and its applications,`` in Global Telecommunications Conference, 1989
  *
- * \anchor franz98concatenated [13] V. Franz and J. Anderson, ''Concatenated Decoding with a 
- * Reduced-Search BCJR Algorithm,`` IEEE Journal on Selected Areas in Communications, 
- * 1998
+ * \anchor kerner09iterative [13] M. Kerner and O. Amrani, ''Iterative Decoding 
+ * Using Optimum Soft Input - Hard Output Module,`` in: IEEE Transactions on 
+ * Communications, vol. 57, no. 7, July 2009, pp. 1881-1885
  */
