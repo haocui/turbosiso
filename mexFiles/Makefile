@@ -5,7 +5,7 @@ PROGRAMS					=		C_SISOmud C_SISOdescrambler C_SISOnsc C_SISOrsc\
 MEX_EXT						:=		$(shell mexext)
 
 #SISO library path
-VPATH						=		/home/bogdan/C++/SISO
+VPATH						=		../SISO
 
 #compiler flags
 CXX							=		mex
