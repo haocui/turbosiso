@@ -6,7 +6,7 @@ TESTS			=		pccc sccc equalizer IDMA BICM STBICM EXIT_pccc\
 						TC_RSC
 
 #SISO class path
-VPATH			=		/home/bogdan/C++/SISO
+VPATH			=		../SISO
 
 #compiler options
 CXX 			=		gcc
