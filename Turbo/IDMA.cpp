@@ -1,16 +1,17 @@
 /** \file
  *
  * \brief Interleave Division Multiple Access with turbo multiuser detection
- * 
- * Reference: L. Liu and L. Ping, ''Iterative detection of chip interleaved CDMA systems in multipath channels,`` 
+ *
+ * Reference: L. Liu and L. Ping, ''Iterative detection of chip interleaved CDMA systems in multipath channels,``
  * Electronics letters, vol. 40, pp. 884-886, July 2004
  */
 
-#define TO_FILE
-#define USE_CC
+//#define TO_FILE
+//#define USE_CC
 
 #include "itpp/itcomm.h"
-#include "../SISO/SISO.cpp"//SISO class
+#include "SISO.h"//SISO class
+#include "Progress_Timer.h"
 
 /// Kronecker operator for vectors (both inputs are seen as column or row vectors)
 template <class Num_T>
@@ -34,30 +35,30 @@ using std::string;
 int main(void)
 {
     //general parameters
-    string mud_method = "maxlogMAP";
+    string mud_method = "maxlogTMAP";
     int nb_usr = 2;
-    int spreading_factor = 16;    
+    int spreading_factor = 16;
 #ifdef USE_CC
 	string map_metric="maxlogMAP";
 	ivec gen = "037 021";
     int constraint_length = 5;
     spreading_factor = 8;
-#endif          
+#endif
     double threshold_value = 50;
     int ch_nb_taps = 4;//number of channel multipaths
     int nb_errors_lim = 1500;
-    int nb_bits_lim = int(1e6);
-    int perm_len = 38400;//permutation length
+    int nb_bits_lim = int(1e3);//int(1e6);
+    int perm_len = 1024;//38400;//permutation length
     int nb_iter = 15;//number of iterations in the turbo decoder
-    vec EbN0_dB = "0:20";
+    vec EbN0_dB = "10";//"0:10:20";
     double Ec = 1.0;//chip energy
-    
+
 #ifdef USE_CC
-    int inv_R = spreading_factor*gen.length();		
-#else    
+    int inv_R = spreading_factor*gen.length();
+#else
     int inv_R = spreading_factor;
 #endif
-	double R = 1.0/double(inv_R);//coding rate    
+	double R = 1.0/double(inv_R);//coding rate
 
     //other parameters
     string filename = "IDMA_"+mud_method+"_"+to_str(nb_usr)+".it";
@@ -70,36 +71,36 @@ int main(void)
     int nb_blocks = 0;//number of blocks
     int nb_errors = 0;//number of errors
     bmat bits(nb_usr,nb_bits);//data bits
-#ifdef USE_CC    
+#ifdef USE_CC
     bvec coded_bits(nb_bits*gen.length());
     vec mod_bits(nb_bits*gen.length());
 #else
     vec mod_bits(nb_bits);
-#endif    
+#endif
     vec chips(perm_len);
     imat perm(nb_usr,perm_len);
     imat inv_perm(nb_usr,perm_len);
     vec em(perm_len);
-    vec rec(perm_len+ch_nb_taps-1);//padding zeros are added    
-    
+    vec rec(perm_len+ch_nb_taps-1);//padding zeros are added
+
     //SISO MUD
     mat mud_apriori_data(nb_usr,perm_len);
     mat mud_extrinsic_data;
-    
+
     //SISO decoder (scrambler or CC)
     vec dec_intrinsic_coded(perm_len);
     vec dec_apriori_data(nb_bits);
     dec_apriori_data.zeros();//always zero
     vec dec_extrinsic_coded;
     vec dec_extrinsic_data;
-    
+
     //decision
-    bvec rec_bits(nb_bits);    
+    bvec rec_bits(nb_bits);
     int snr_len = EbN0_dB.length();
     mat ber(nb_iter,snr_len);
     ber.zeros();
     register int en,n,u;
-    
+
 #ifdef USE_CC
     //CC
     Convolutional_Code nsc;
@@ -108,7 +109,7 @@ int main(void)
 
 	//BPSK
 	BPSK bpsk;
-    
+
     //scrambler pattern
     vec pattern = kron(ones(spreading_factor/2), vec("1.0 -1.0"));
 
@@ -136,12 +137,12 @@ int main(void)
 	BERC berc;
 
     //progress timer
-    Progress_Timer timer;
+    tr::Progress_Timer timer;
     timer.set_max(snr_len);
-        
+
     //Randomize generators
     RNG_randomize();
-    
+
     //main loop
     timer.progress(0.0);
     for (en=0;en<snr_len;en++)
@@ -159,27 +160,27 @@ int main(void)
 	            perm.set_row(u, sort_index(randu(perm_len)));
 	            //inverse permutation
 	            inv_perm.set_row(u, sort_index(perm.get_row(u)));
-	
+
 	            //bits generation
 	            bits.set_row(u, randb(nb_bits));
-	            
+
 #ifdef USE_CC
 	            //convolutional code
 	            nsc.encode(bits.get_row(u), coded_bits);//no tail
 
 	            //BPSK modulation (1->-1,0->+1)
 	            mod_bits = bpsk.modulate_bits(coded_bits);
-#else	            	            
+#else
 	            //BPSK modulation (1->-1,0->+1)
 	            mod_bits = bpsk.modulate_bits(bits.get_row(u));
-#endif	            
-	
+#endif
+
 	            //scrambler
 	            chips = kron(mod_bits, pattern);
-	            
+
 	            //permutation
-	            em = chips(perm.get_row(u));          
-	
+	            em = chips(perm.get_row(u));
+
 	            //multipath channel
 	            single_ch = randray(ch_nb_taps);
 	            single_ch /= sqrt(sum_sqr(single_ch));//normalized power profile
@@ -204,10 +205,10 @@ int main(void)
 #ifdef USE_CC
 					//decoder+descrambler
 					siso.nsc(dec_extrinsic_coded, dec_extrinsic_data, dec_intrinsic_coded, dec_apriori_data);
-#else	                
+#else
 	                //descrambler
 	                siso.descrambler(dec_extrinsic_coded, dec_extrinsic_data, dec_intrinsic_coded, dec_apriori_data);
-#endif	                
+#endif
 	                //decision
 	                rec_bits = bpsk.demodulate_bits(-dec_extrinsic_data);//suppose that a priori info is zero
 	                //count errors
@@ -242,7 +243,7 @@ int main(void)
     ff << Name("nb_bits_lim") << nb_bits_lim;
 #ifdef USE_CC
 	ff << Name("gen") << gen;
-#endif    
+#endif
     ff.close();
 #else
     //show BER
@@ -251,4 +252,3 @@ int main(void)
 
     return 0;
 }
-

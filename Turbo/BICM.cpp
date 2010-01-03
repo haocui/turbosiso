@@ -8,10 +8,11 @@
  * in Vehicular Technology Conference, vol. 1, pp. 473-478 vol.1, 2000
  */
 
-#define TO_FILE
+//#define TO_FILE
 
 #include "itpp/itcomm.h"//for BPSK and BERC classes
-#include "../SISO/SISO.cpp"//SISO class
+#include "SISO.h"//SISO class
+#include "Progress_Timer.h"
 
 using namespace itpp;
 using tr::SISO;
@@ -32,7 +33,7 @@ int main(void)
     int nb_bits_lim = int(1e6);
     int perm_len = pow2i(14);//permutation length
     int nb_iter = 10;//number of iterations in the turbo decoder
-    vec EbN0_dB = "0:20";
+    vec EbN0_dB = "20";
     double R = 1.0/2.0;//coding rate of FEC
     double Es = 1.0;//mean symbol energy    
 
@@ -91,7 +92,7 @@ int main(void)
     BERC berc;
 
     //progress timer
-    Progress_Timer timer;
+    tr::Progress_Timer timer;
     timer.set_max(snr_len);
         
     //Randomize generators
