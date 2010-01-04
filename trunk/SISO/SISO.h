@@ -129,7 +129,6 @@ public:
     /// Sets Multi-User Detector method
     /** Possible input values are:
      * - maxlogMAP
-     * - maxlogTMAP
      * - GCD
      * - sGCD (simplified GCD)
      */

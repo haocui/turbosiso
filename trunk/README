@@ -1,0 +1,31 @@
+Soft-Input Soft-Output (SISO) library for turbo reception
+
+Author: Bogdan Cristea
+
+
+Enter into SISO folder and compile the SISO library with:
+make
+Note that IT++ library should be already installed. Both, release and debug versions
+of the SISO shared library, are generated.
+
+Install SISO library with:
+make install
+The default installation path for the shared libraries is '/usr/local/lib'. Note 
+that the header files remain into SISO folder.
+
+Generate the html help with:
+make help
+Note that Doxygen needs to be installed. Optionally wiki help can be generated with:
+make wiki
+html2wiki needs to be installed.
+
+Several examples are available into Turbo folder. Enter into this folder and
+compile a given example with
+make example_name
+by replacing example_name with the desired example.
+
+mexFiles folder contains MATLAB interfaces for all available SISO modules. Enter
+into mexFiles folder and compile the mex files with:
+make
+Note that MATLAB needs to be installed. If necessary, edit the Makefile in order
+to adjust compilation parameters to your needs (by default ACML library is used).
