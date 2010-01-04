@@ -17,7 +17,7 @@ void mexFunction(int n_output, mxArray *output[], int n_input, const mxArray *in
 {
     // Check the number of inputs and output arguments
     if(n_output!=2) mexErrMsgTxt("Two output required!");
-    if(n_input!=6) mexErrMsgTxt("Six inputs required!");
+    if(n_input!=8) mexErrMsgTxt("Eight inputs required!");
     
     // Convert input variables to IT++ format
     vec intrinsic_coded = mxArray2vec(input[0]);
@@ -26,6 +26,8 @@ void mexFunction(int n_output, mxArray *output[], int n_input, const mxArray *in
     int win_len = mxArray2int(input[3]);
     bool hard_output_flag = (mxArray2double(input[4])==1.0);
     std::string map_metric = mxArray2string(input[5]);
+    double matching_scaling_factor = mxArray2double(input[6]);
+    double nonmatching_scaling_factor = mxArray2double(input[7]);
     
     // ------------------ Start of routine ---------------------------
     tr::SISO siso; 
@@ -33,6 +35,9 @@ void mexFunction(int n_output, mxArray *output[], int n_input, const mxArray *in
     siso.set_viterbi_win_len(win_len);
     siso.set_viterbi_hard_output_flag(hard_output_flag);
     siso.set_map_metric(map_metric);
+    siso.set_viterbi_scaling_factors(matching_scaling_factor, nonmatching_scaling_factor);
+    siso.set_sova_scaling_factor(matching_scaling_factor);//last two inputs are used for both Viterbi and SOVA
+    siso.set_sova_threshold(nonmatching_scaling_factor);
     vec extrinsic_data;
     vec extrinsic_coded;
     siso.rsc(extrinsic_coded, extrinsic_data, intrinsic_coded, apriori_data);
