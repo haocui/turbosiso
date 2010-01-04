@@ -82,9 +82,9 @@ install :
 	cp -f $(LIBRARY_NAME)_debug.so.$(LIBRARY_VERSION) $(INSTALL_PATH)
 	cd $(INSTALL_PATH)
 	ln -sf $(LIBRARY_NAME).so.$(LIBRARY_VERSION) $(LIBRARY_NAME).so.$(MAJOR_NO)
-	ln -sf $(LIBRARY_NAME).so.$(MAJOR_NO) $(LIBRARY_NAME).so
+	ln -sf $(LIBRARY_NAME).so.$(LIBRARY_VERSION) $(LIBRARY_NAME).so
 	ln -sf $(LIBRARY_NAME)_debug.so.$(LIBRARY_VERSION) $(LIBRARY_NAME)_debug.so.$(MAJOR_NO)
-	ln -sf $(LIBRARY_NAME)_debug.so.$(MAJOR_NO) $(LIBRARY_NAME)_debug.so
+	ln -sf $(LIBRARY_NAME)_debug.so.$(LIBRARY_VERSION) $(LIBRARY_NAME)_debug.so
 	/sbin/ldconfig $(INSTALL_PATH)
 
 clean :
